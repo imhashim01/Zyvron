@@ -9,7 +9,37 @@ const { sendOrderConfirmationEmail, sendOrderStatusEmail } = require("../utils/s
 const FREE_SHIPPING_THRESHOLD = 3000;
 const SHIPPING_FEE = 199;
 
+/** Atomically claims `quantity` units of stock, only succeeding if enough stock is still available. */
+async function claimStock(productId, quantity) {
+  return Product.findOneAndUpdate(
+    { _id: productId, isActive: true, stock: { $gte: quantity } },
+    { $inc: { stock: -quantity } },
+    { new: true }
+  );
+}
+
+async function releaseStock(claims) {
+  await Promise.all(
+    claims.map((claim) => Product.updateOne({ _id: claim.productId }, { $inc: { stock: claim.quantity } }))
+  );
+}
+
+/** Atomically claims one use of a coupon, only succeeding if it is still under its usage limit. */
+async function claimCoupon(couponId) {
+  return Coupon.findOneAndUpdate(
+    { _id: couponId, $expr: { $lt: ["$usedCount", "$usageLimit"] } },
+    { $inc: { usedCount: 1 } },
+    { new: true }
+  );
+}
+
+async function releaseCoupon(couponId) {
+  await Coupon.updateOne({ _id: couponId }, { $inc: { usedCount: -1 } });
+}
+
 async function create(req, res, next) {
+  const claimedStock = [];
+  let claimedCouponId = null;
   try {
     const { items, customer, couponCode } = req.body;
 
@@ -20,18 +50,22 @@ async function create(req, res, next) {
       return res.status(400).json({ message: "customer name, phone, city and address are required" });
     }
 
-    // Re-price every item from the live catalog - never trust client-submitted prices/totals.
+    // Re-price every item from the live catalog, and atomically claim its stock so two concurrent
+    // orders can never both succeed against the last unit. Anything already claimed is released if a
+    // later step in this order fails.
     const orderItems = [];
-    const stockUpdates = [];
     for (const line of items) {
-      const product = await Product.findById(line.productId);
-      if (!product || !product.isActive) {
-        return res.status(400).json({ message: `Product ${line.productId} is not available` });
-      }
       const quantity = Math.max(1, parseInt(line.quantity, 10) || 1);
-      if (product.stock < quantity) {
-        return res.status(400).json({ message: `Insufficient stock for ${product.title}` });
+      const product = await claimStock(line.productId, quantity);
+      if (!product) {
+        const existing = await Product.findById(line.productId);
+        await releaseStock(claimedStock);
+        if (!existing || !existing.isActive) {
+          return res.status(400).json({ message: `Product ${line.productId} is not available` });
+        }
+        return res.status(400).json({ message: `Insufficient stock for ${existing.title}` });
       }
+      claimedStock.push({ productId: product._id, quantity });
       orderItems.push({
         product: product._id,
         title: product.title,
@@ -39,7 +73,6 @@ async function create(req, res, next) {
         price: product.price,
         quantity,
       });
-      stockUpdates.push({ productId: product._id, quantity });
     }
 
     const subtotal = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -48,9 +81,18 @@ async function create(req, res, next) {
     let appliedCoupon = null;
     if (couponCode) {
       const result = await checkCoupon(couponCode, subtotal);
-      if (!result.valid) return res.status(400).json({ message: result.message });
+      if (!result.valid) {
+        await releaseStock(claimedStock);
+        return res.status(400).json({ message: result.message });
+      }
+      const claimed = await claimCoupon(result.coupon._id);
+      if (!claimed) {
+        await releaseStock(claimedStock);
+        return res.status(400).json({ message: "Coupon usage limit reached" });
+      }
+      claimedCouponId = claimed._id;
       discount = result.discount;
-      appliedCoupon = result.coupon;
+      appliedCoupon = claimed;
     }
 
     const shippingFee = subtotal - discount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
@@ -61,32 +103,30 @@ async function create(req, res, next) {
     let userId = null;
     if (req.user) userId = req.user._id;
 
-    const order = await Order.create({
-      orderNumber,
-      user: userId,
-      customer: {
-        name: customer.name,
-        phone: customer.phone,
-        email: customer.email || (req.user ? req.user.email : undefined),
-        city: customer.city,
-        address: customer.address,
-      },
-      items: orderItems,
-      subtotal,
-      discount,
-      couponCode: appliedCoupon ? appliedCoupon.code : null,
-      shippingFee,
-      total,
-      status: "pending",
-    });
-
-    // Decrement stock (best-effort, sequential - catalog/order volume is small).
-    for (const update of stockUpdates) {
-      await Product.updateOne({ _id: update.productId }, { $inc: { stock: -update.quantity } });
-    }
-
-    if (appliedCoupon) {
-      await Coupon.updateOne({ _id: appliedCoupon._id }, { $inc: { usedCount: 1 } });
+    let order;
+    try {
+      order = await Order.create({
+        orderNumber,
+        user: userId,
+        customer: {
+          name: customer.name,
+          phone: customer.phone,
+          email: customer.email || (req.user ? req.user.email : undefined),
+          city: customer.city,
+          address: customer.address,
+        },
+        items: orderItems,
+        subtotal,
+        discount,
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
+        shippingFee,
+        total,
+        status: "pending",
+      });
+    } catch (createErr) {
+      await releaseStock(claimedStock);
+      if (claimedCouponId) await releaseCoupon(claimedCouponId);
+      throw createErr;
     }
 
     sendOrderConfirmationEmail(order).catch(() => {});

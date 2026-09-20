@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { smtp } = require("../config/env");
+const { smtp, clientUrl } = require("../config/env");
 
 let transporter = null;
 
@@ -64,15 +64,18 @@ function sendOrderConfirmationEmail(order) {
   const itemsHtml = order.items
     .map((i) => `<li>${i.title} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
     .join("");
+  const trackUrl = `${clientUrl}/track-order?orderNumber=${encodeURIComponent(order.orderNumber)}`;
   return sendEmail({
     to: order.customer.email,
-    subject: `Order confirmed - ${order.orderNumber}`,
+    subject: `Your order has been received — Zyvron (${order.orderNumber})`,
     html: wrap(
-      "Your order is confirmed",
-      `<p>Hi ${order.customer.name}, thanks for your order <strong>${order.orderNumber}</strong>.</p>
+      "Your order has been received",
+      `<p>Hi ${order.customer.name}, thanks for your order <strong>${order.orderNumber}</strong>. We've received it and will get it to you soon.</p>
        <ul>${itemsHtml}</ul>
        <p>Subtotal: Rs. ${order.subtotal}<br/>Discount: Rs. ${order.discount}<br/>Shipping: Rs. ${order.shippingFee}<br/><strong>Total: Rs. ${order.total}</strong></p>
-       <p>Payment method: ${order.paymentMethod}</p>`
+       <p>Payment method: ${order.paymentMethod}</p>
+       <p>Estimated delivery: 2-4 working days${order.shippingFee === 0 ? " (free shipping applied)" : ""}.</p>
+       <p><a href="${trackUrl}" style="background:#00D9FF;color:#000;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Track your order</a></p>`
     ),
   });
 }
