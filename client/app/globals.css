@@ -3,6 +3,33 @@
 @theme inline {
   --font-sans: var(--font-jakarta);
   --font-heading: var(--font-grotesk);
+
+  /* Brand ramp, ported from the old site's resolved dark-navy/cyan palette
+     (style.css's --zv-* custom properties, taking the last-declared value
+     of each since later :root blocks in that file won the cascade).
+     Overriding the standard Tailwind cyan shades - rather than inventing
+     new token names - means every existing cyan-300/400 utility across the
+     app instantly renders the correct brand color. */
+  --color-cyan-50: #eafdff;
+  --color-cyan-100: #ccf9ff;
+  --color-cyan-200: #99f2ff;
+  --color-cyan-300: #38e8ff;
+  --color-cyan-400: #00d9ff;
+  --color-cyan-500: #19bdf0;
+  --color-cyan-600: #00a3c9;
+  --color-cyan-700: #077a9c;
+  --color-cyan-800: #0a1620;
+  --color-cyan-900: #071523;
+
+  /* Secondary accent used sparingly (flash-sale/gradient accents). */
+  --color-violet-500: #8b5cf6;
+
+  /* Dark-navy surface family used by the shared Card/panel components. */
+  --color-navy-950: #030a14;
+  --color-navy-900: #05060a;
+  --color-navy-800: #0a1424;
+  --color-navy-700: #081827;
+  --color-navy-600: #0d192b;
 }
 
 :root {
@@ -29,4 +56,26 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Sitewide visible focus style. Every input in this app previously paired
+   focus:outline-none with only a border-color change, which is not a
+   reliable focus indicator (WCAG 2.4.7) - focus:outline-none has since been
+   removed from every input across the app; this is the one real replacement
+   for all of them, matching the ring the old static site used. */
+:where(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-cyan-400);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

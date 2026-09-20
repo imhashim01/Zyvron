@@ -90,12 +90,12 @@ export default function AdminCouponsPage() {
             placeholder="Code (e.g. WELCOME10)"
             value={form.code}
             onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <select
             value={form.type}
             onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
           >
             <option value="percent" className="bg-[#05060a]">Percent off</option>
             <option value="fixed" className="bg-[#05060a]">Fixed amount off</option>
@@ -106,21 +106,21 @@ export default function AdminCouponsPage() {
             placeholder="Value"
             value={form.value}
             onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
             type="number"
             placeholder="Min order amount (optional)"
             value={form.minOrderAmount}
             onChange={(e) => setForm((f) => ({ ...f, minOrderAmount: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
             type="number"
             placeholder="Usage limit (optional)"
             value={form.usageLimit}
             onChange={(e) => setForm((f) => ({ ...f, usageLimit: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <button type="submit" className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300 sm:col-span-2">
             Create Coupon

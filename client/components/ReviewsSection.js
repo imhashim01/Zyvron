@@ -93,12 +93,12 @@ export default function ReviewsSection({ productId }) {
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="Your name"
-            className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <select
             value={form.rating}
             onChange={(e) => setForm((f) => ({ ...f, rating: Number(e.target.value) }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
           >
             {[5, 4, 3, 2, 1].map((n) => (
               <option key={n} value={n} className="bg-[#05060a]">
@@ -112,7 +112,7 @@ export default function ReviewsSection({ productId }) {
           onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
           placeholder="Share your experience with this product…"
           rows={3}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
         />
         <button
           type="submit"

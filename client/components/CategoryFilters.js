@@ -94,7 +94,7 @@ export default function CategoryFilters({ activeSlug }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search this category…"
-            className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <button
             type="submit"
@@ -107,7 +107,7 @@ export default function CategoryFilters({ activeSlug }) {
         <select
           defaultValue={searchParams.get("sort") || "popular"}
           onChange={onSortChange}
-          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
         >
           {SORTS.map((s) => (
             <option key={s.value} value={s.value} className="bg-[#05060a]">

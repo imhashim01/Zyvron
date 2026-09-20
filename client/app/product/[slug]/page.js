@@ -38,7 +38,7 @@ export default async function ProductPage({ params }) {
   if (!product) notFound();
 
   const relatedData = await serverFetch(
-    `/products?category=${encodeURIComponent(product.category)}&limit=5`
+    `/products?category=${encodeURIComponent(product.category?.slug || "")}&limit=5`
   );
   const related = (relatedData?.products || []).filter((p) => p._id !== product._id).slice(0, 4);
 
@@ -75,7 +75,12 @@ export default async function ProductPage({ params }) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: product.category, item: `${SITE_URL}/category/${product.category}` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: product.category?.name,
+        item: `${SITE_URL}/category/${product.category?.slug}`,
+      },
       { "@type": "ListItem", position: 3, name: product.title, item: `${SITE_URL}/product/${product.slug}` },
     ],
   };
@@ -90,7 +95,7 @@ export default async function ProductPage({ params }) {
 
         <div>
           <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-cyan-300">
-            {product.category}
+            {product.category?.name}
           </p>
           <h1 className="mb-2 font-heading text-2xl font-bold text-white sm:text-3xl">
             {product.title}

@@ -53,7 +53,7 @@ export default function ProductCard({ product }) {
 
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <span className="text-[11px] uppercase tracking-wide text-cyan-300/80">
-          {product.category}
+          {product.category?.name || product.category}
         </span>
         <Link href={`/product/${product.slug}`}>
           <h3 className="line-clamp-2 text-sm font-semibold text-white/90 hover:text-cyan-300">

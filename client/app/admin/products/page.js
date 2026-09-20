@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { apiJson } from "@/lib/api";
 import { formatPKR } from "@/lib/format";
-import { CATEGORY_META } from "@/lib/constants";
 
 const EMPTY_FORM = {
   title: "",
-  category: "audio-speakers",
+  category: "",
   price: "",
   compareAtPrice: "",
   image: "",
@@ -19,6 +18,7 @@ const EMPTY_FORM = {
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState(EMPTY_FORM);
@@ -28,8 +28,12 @@ export default function AdminProductsPage() {
   async function load() {
     setLoading(true);
     try {
-      const data = await apiJson("/products?limit=200");
-      setProducts(data?.products || []);
+      const [productsData, categoriesData] = await Promise.all([
+        apiJson("/products?limit=200"),
+        apiJson("/categories"),
+      ]);
+      setProducts(productsData?.products || []);
+      setCategories(categoriesData || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -42,7 +46,7 @@ export default function AdminProductsPage() {
   }, []);
 
   function startAdd() {
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM, category: categories[0]?._id || "" });
     setEditingId(null);
     setShowForm(true);
   }
@@ -50,7 +54,7 @@ export default function AdminProductsPage() {
   function startEdit(p) {
     setForm({
       title: p.title,
-      category: p.category,
+      category: p.category?._id || p.category,
       price: p.price,
       compareAtPrice: p.compareAtPrice || "",
       image: p.image || "",
@@ -118,16 +122,20 @@ export default function AdminProductsPage() {
             placeholder="Title"
             value={form.title}
             onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <select
+            required
             value={form.category}
             onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
           >
-            {Object.entries(CATEGORY_META).map(([slug, meta]) => (
-              <option key={slug} value={slug} className="bg-[#05060a]">
-                {meta.name}
+            <option value="" disabled className="bg-[#05060a]">
+              Select a category
+            </option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id} className="bg-[#05060a]">
+                {cat.name}
               </option>
             ))}
           </select>
@@ -137,26 +145,26 @@ export default function AdminProductsPage() {
             placeholder="Price"
             value={form.price}
             onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
             type="number"
             placeholder="Compare-at price (optional)"
             value={form.compareAtPrice}
             onChange={(e) => setForm((f) => ({ ...f, compareAtPrice: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
             placeholder="Image URL"
             value={form.image}
             onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none sm:col-span-2"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 sm:col-span-2"
           />
           <input
             placeholder="Badge (e.g. Hot Deal)"
             value={form.badge}
             onChange={(e) => setForm((f) => ({ ...f, badge: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
             required
@@ -164,14 +172,14 @@ export default function AdminProductsPage() {
             placeholder="Stock"
             value={form.stock}
             onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <textarea
             placeholder="Description"
             value={form.description}
             onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             rows={2}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none sm:col-span-2"
+            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 sm:col-span-2"
           />
           <label className="flex items-center gap-2 text-sm text-white/70">
             <input
@@ -210,7 +218,7 @@ export default function AdminProductsPage() {
               {products.map((p) => (
                 <tr key={p._id} className="border-t border-white/10 text-white/80">
                   <td className="p-3">{p.title}</td>
-                  <td className="p-3">{CATEGORY_META[p.category]?.name || p.category}</td>
+                  <td className="p-3">{p.category?.name || "-"}</td>
                   <td className="p-3">{formatPKR(p.price)}</td>
                   <td className="p-3">{p.stock ?? "-"}</td>
                   <td className="p-3 text-right">

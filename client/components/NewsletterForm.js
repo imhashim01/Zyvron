@@ -33,7 +33,7 @@ export default function NewsletterForm() {
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="03XXXXXXXXX"
-        className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 focus:outline-none sm:w-56"
+        className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 sm:w-56"
       />
       <button
         type="submit"
