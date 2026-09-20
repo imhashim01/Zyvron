@@ -1,7 +1,7 @@
 # Zyvron Tech Accessories — MERN + Next.js rebuild
 
-This replaces the old single-file `index.html` / `script.js` / Firebase site (still untouched at the
-repo root for reference) with a real backend and an SEO-ready frontend:
+This replaces the old single-file `index.html` / `script.js` / Firebase site with a real backend and
+an SEO-ready frontend:
 
 - **`/server`** — Node + Express + MongoDB (Mongoose) API. JWT auth (access token + httpOnly refresh
   cookie), forgot/reset-password email via Nodemailer (Gmail SMTP), products/categories/coupons/orders
@@ -9,6 +9,12 @@ repo root for reference) with a real backend and an SEO-ready frontend:
 - **`/client`** — Next.js (App Router) storefront + admin panel. Server-rendered/ISR product and
   category pages, per-page metadata, JSON-LD (Organization/WebSite/Product/BreadcrumbList),
   `sitemap.xml`, `robots.txt`.
+- **`/legacy-static-site`** — the original pre-MERN site (`index.html`, `script.js`, `style.css`,
+  `firestore.rules`, its `assets/`, and old dev screenshots under `old-screenshots/`). It is not part of
+  the live app and is not deployed — it's kept purely as the reference the ongoing MERN feature/design
+  port is being checked against, since it's still the source of truth for exact copy, layout, and
+  behavior until every page has been ported. Once the port reaches full parity, this folder can be
+  deleted.
 
 ## 1. Prerequisites
 
