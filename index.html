@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Zyvron Tech Accessories™ — Premium Gadgets & Smart Tech Store</title>
+  <meta name="description" content="Shop premium wireless audio, smartwatches, gaming gear &amp; smart mobile accessories in Pakistan. Cash on delivery &amp; free nationwide shipping on orders over Rs. 3,000." />
+  <meta name="google-site-verification" content="3leQ1Wte4QJga0qyP7WYSulZ5TJfOE40cRZjrdZSokI" />
+
+  <!-- Brand favicon / tab icon (replaces the previous emoji placeholder) -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="256x256" href="assets/favicon-256.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#05060a" />
+
+  <!-- Social share preview (og:image / Twitter card) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Zyvron Tech Accessories™ — Premium Gadgets & Smart Tech Store" />
+  <meta property="og:description" content="Shop premium wireless audio, smartwatches, gaming gear &amp; smart mobile accessories in Pakistan. Cash on delivery &amp; free nationwide shipping on orders over Rs. 3,000." />
+  <meta property="og:image" content="assets/zyvron-og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="assets/zyvron-og-image.png" />
+
+  <!-- Google Fonts: Plus Jakarta Sans (body) + Space Grotesk (headings) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Single stylesheet: compiled utility styles + custom styles + extra hover effects.
+       The ?v= query string is a cache-buster — bump it every time style.css
+       changes, otherwise returning visitors' browsers keep serving an old
+       cached copy of this exact filename indefinitely and never see fixes
+       (this is why a previously-fixed bug can appear to "come back"). -->
+  <link rel="stylesheet" href="style.css?v=20260914" />
+</head>
+<body class="bg-neutral-100 antialiased">
+
+  <!-- Main Store App Mount Point.
+       Seeded with an inline, dependency-free loading screen so something
+       real is on screen the instant the HTML paints — not just a blank
+       page — while style.css/script.js/fonts are still downloading. All
+       CSS is inline right here on purpose (not in style.css) so it can't
+       be blocked by the same stylesheet it's meant to stand in for.
+       App.render() fully replaces #app's innerHTML on its first run, so
+       this markup is automatically swapped out the moment the real store
+       is ready — nothing to clean up. -->
+  <div id="app">
+    <div id="zv-boot-loading" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#09090b;gap:14px;">
+      <img src="assets/zyvron-icon.png" alt="Zyvron" style="width:56px;height:auto;object-fit:contain;filter:drop-shadow(0 0 14px rgba(34,211,238,0.55));" />
+      <div style="width:34px;height:34px;border-radius:50%;border:3px solid rgba(0,217,255,0.25);border-top-color:#00D9FF;animation:zv-spin 0.8s linear infinite;"></div>
+      <p style="font-family:sans-serif;font-size:12px;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.55);">Loading store…</p>
+    </div>
+  </div>
+  <style>@keyframes zv-spin{to{transform:rotate(360deg)}}</style>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Boot-guard: independent of Firebase and of script.js entirely.
+       If the #zv-boot-loading spinner is STILL the thing showing a few
+       seconds after page load — meaning App.render() in script.js never
+       ran to replace it, for some reason we can't predict — show a real
+       message instead of leaving the spinner spinning forever. (Checking
+       for that specific element, not just "#app has no children": #app
+       always has the spinner in it from the first paint now, so an
+       emptiness check alone would never catch a real failure.) This has
+       no dependency on anything else on the page. -->
+  <script>
+    setTimeout(function () {
+      var mount = document.getElementById('app');
+      if (mount && document.getElementById('zv-boot-loading')) {
+        mount.innerHTML =
+          '<div style="min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:#fff;font-family:sans-serif;">' +
+            '<div style="font-size:40px;margin-bottom:12px;">🔌</div>' +
+            '<h1 style="font-size:18px;font-weight:800;margin-bottom:8px;">The store didn\'t load</h1>' +
+            '<p style="font-size:13px;opacity:0.7;max-width:320px;margin-bottom:18px;">This is usually a connection hiccup. Please check your internet connection and reload.</p>' +
+            '<button onclick="location.reload()" style="background:#00D9FF;color:#000;font-weight:800;padding:10px 24px;border-radius:12px;border:none;font-size:14px;">Reload</button>' +
+          '</div>';
+      }
+    }, 6000);
+  </script>
+
+  <!-- Single script: product data + store state + app render logic + extra features -->
+  <!-- Firebase Web SDK (modular CDN) -->
+  <script type="module">
+    // The storefront itself (script.js) must load and render regardless of
+    // whether Firebase succeeds. Previously, if Firebase Analytics/Firestore
+    // failed to initialize for any reason (ad blocker, privacy extension,
+    // flaky network, regional block on gstatic.com), the `await import`
+    // below never ran and the ENTIRE page stayed blank forever — nothing
+    // rendered, not even the nav bar, because script.js was never fetched.
+    // Firebase config/behavior itself is unchanged below; this only adds a
+    // safety net so a third-party script failure can't take the whole
+    // storefront down with it.
+    async function boot() {
+      // Render the local storefront immediately while Firebase modules load.
+      // Firebase is an enhancement for sync/auth, not a prerequisite for the
+      // customer-facing catalog and cart.
+      // Same cache-busting reasoning as style.css above — bump ?v= whenever
+      // script.js changes so it isn't served stale from browser cache.
+      const storefrontPromise = import("./script.js?v=20260914");
+      const firebaseConfig = {
+        apiKey: "AIzaSyBzG0VOv8FQ4hbA9jg4neibt1HNyLy5ruM",
+        authDomain: "zyvron-bf978.firebaseapp.com",
+        projectId: "zyvron-bf978",
+        storageBucket: "zyvron-bf978.firebasestorage.app",
+        messagingSenderId: "835690866653",
+        appId: "1:835690866653:web:592b540400ea012e1c3834",
+        measurementId: "G-5LM2BWZ8EP"
+      };
+
+      // FIX: Analytics and Firestore are now initialized independently, each
+      // in its own try/catch. Previously both were awaited inside a single
+      // try block, so if getAnalytics() threw (Firebase Analytics is one of
+      // the most commonly blocked domains/scripts by ad blockers, tracking
+      // protection, and privacy extensions — far more often blocked than
+      // Firestore itself), the whole block failed BEFORE getFirestore() ever
+      // ran, and window.ZYVRON_FIREBASE was set to null — silently disabling
+      // Firestore too, even though Firestore itself was never the problem.
+      // That is the most likely explanation for orders/admin sync
+      // intermittently going blank after a refresh with no visible error.
+      let firebaseApp = null;
+      let analytics = null;
+      let db = null;
+      let auth = null;
+
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js");
+        firebaseApp = initializeApp(firebaseConfig);
+      } catch (err) {
+        console.warn("Firebase core failed to initialize — continuing without it (cart/catalog still work via localStorage).", err);
+      }
+
+      if (firebaseApp) {
+        // PERF FIX: these three used to be awaited one after another, so on
+        // a slow/high-latency connection (e.g. mobile data) their network
+        // round-trips stacked on top of each other — three sequential
+        // fetches to gstatic.com instead of one. They don't depend on each
+        // other, so fire all three at once and let the browser fetch them
+        // in parallel; each still fails independently via its own
+        // try/catch inside the helper, exactly as before.
+        const [firestoreResult, authResult, analyticsResult] = await Promise.allSettled([
+          (async () => {
+            const { initializeFirestore } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js");
+            // FIX: was getFirestore(firebaseApp), which defaults to Firestore's
+            // WebChannel/QUIC streaming transport. In environments where that
+            // transport is blocked or unstable (proxies, some antivirus/VPN
+            // setups, certain mobile carriers), that showed up as repeated
+            // ERR_QUIC_PROTOCOL_ERROR / ERR_ABORTED 400 network errors and a
+            // "WebChannelConnection RPC 'Listen' stream transport errored" log
+            // — and Firestore's automatic retry-and-fall-back-to-long-polling
+            // cycle is what was generating the recurring `setTimeout` handler
+            // violations coming from inside the SDK (firebase-firestore.js).
+            // experimentalAutoDetectLongPolling makes Firestore detect this
+            // case up front and use long-polling directly instead of
+            // repeatedly failing the streaming connection first — same
+            // real-time sync behavior, just without the failed-attempt churn.
+            return initializeFirestore(firebaseApp, {
+              experimentalAutoDetectLongPolling: true,
+            });
+          })(),
+          (async () => {
+            const { getAuth } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js");
+            return getAuth(firebaseApp);
+          })(),
+          (async () => {
+            const { getAnalytics } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js");
+            return getAnalytics(firebaseApp);
+          })()
+        ]);
+
+        if (firestoreResult.status === "fulfilled") {
+          db = firestoreResult.value;
+        } else {
+          console.warn("Firestore failed to initialize — orders/products sync will be unavailable this session.", firestoreResult.reason);
+        }
+
+        if (authResult.status === "fulfilled") {
+          auth = authResult.value;
+        } else {
+          // Admin login relies on this — without it, the admin console is
+          // simply unreachable this session (customer storefront is unaffected).
+          console.warn("Firebase Auth failed to initialize — admin login will be unavailable this session.", authResult.reason);
+        }
+
+        if (analyticsResult.status === "fulfilled") {
+          analytics = analyticsResult.value;
+        } else {
+          // Analytics being blocked is common and must never take Firestore down with it.
+          console.warn("Firebase Analytics failed to initialize (often blocked by ad blockers) — continuing without it.", analyticsResult.reason);
+        }
+      }
+
+      // Make Firebase available to the existing single-file storefront before
+      // the storefront script is imported. This avoids a race between module
+      // and classic scripts during page startup.
+      window.ZYVRON_FIREBASE = (db || auth) ? { app: firebaseApp, analytics, db, auth } : null;
+
+      await storefrontPromise;
+
+      // Firebase may finish after the storefront has already rendered. Start
+      // the live services now that the shared connection is available.
+      // Firestore-backed sync and Auth-backed login are independent: one
+      // being down must never silently disable the other.
+      if (window.store) {
+        if (db) {
+          window.store.initFirestoreProductsSync();
+          window.store.initFirestoreCouponsSync();
+          window.store.initFirestoreReviewsSync();
+        }
+        if (auth) {
+          window.app?.initAdminAuthListener();
+          window.app?.initCustomerAuthListener();
+        }
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

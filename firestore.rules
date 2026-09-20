@@ -1,0 +1,170 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Structural sanity-check for a brand-new order (see /orders below,
+    // "create"). This does NOT verify that item prices or the total match
+    // the live product catalog — Firestore rules have no way to loop over
+    // a variable-length items array and cross-check each one against
+    // /products_*/{id}, so a visitor who edits the total in devtools before
+    // submitting can still slip a mismatched total past this rule. Closing
+    // that gap fully needs a server-side check (e.g. a Cloud Function) that
+    // recomputes the total from the catalog before/after the write. What
+    // this DOES stop: garbage/malformed submissions, an order arriving
+    // already marked something other than 'pending' (skipping the admin
+    // review queue), a document ID that doesn't match its own orderNumber
+    // field, and missing/negative amounts. Shape matches exactly what
+    // Store.placeOrder() in script.js builds — see that function before
+    // changing either side of this.
+    function isValidNewOrder(orderId, data) {
+      return data.orderNumber is string && data.orderNumber == orderId
+        && data.status == 'pending'
+        && data.items is list && data.items.size() > 0
+        && data.subtotal is number && data.subtotal >= 0
+        && data.discount is number && data.discount >= 0
+        && data.total is number && data.total >= 0
+        && data.customer is map
+        && data.customer.name is string && data.customer.name.size() > 0
+        && data.customer.phone is string && data.customer.phone.size() > 0
+        && data.customer.address is string && data.customer.address.size() > 0
+        && data.customer.city is string && data.customer.city.size() > 0;
+    }
+
+    // Admin allowlist: a doc at /admins/{uid} marks that Firebase Auth user
+    // as an admin. Created manually in the Firebase Console (see setup
+    // notes) — never writable from the client. An authenticated user can
+    // read only their own allowlist document; rules can still check admin
+    // membership with exists() without exposing the admin list.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Public storefront can submit COD orders. The admin console also reads
+    // this collection (order list/notifications) and updates an order's
+    // `status` field only (Cancel Order button) — same "no real auth"
+    // prototype caveat as products/coupons below. Deletes stay disabled so
+    // the order history can't be wiped from the browser.
+    // Single-document reads stay fully open ("get") — that's what the
+    // customer-facing "Track My Order" (by code) relies on with no login.
+    // "Track by Phone Number" was removed since it needed to *list*/query
+    // across all orders, which is now admin-only (see "list" below).
+    // Update is now restricted to ONLY the three fields the admin console
+    // actually ever writes (status, customerStatus, statusUpdatedAt) — previously "if true"
+    // allowed changing anything on any order (total, items, customer info)
+    // from the browser console; this closes that without changing any
+    // existing app behavior.
+    // For production, replace this with authenticated/admin backend access.
+    match /orders/{orderId} {
+      // Was "if true" (any signed-in-or-not visitor could write literally
+      // any document shape here). Now requires the new order to at least
+      // look like a real order — see isValidNewOrder() above for exactly
+      // what is and isn't checked.
+      allow create: if isValidNewOrder(orderId, request.resource.data);
+      // Fetching a single known order (by its code) stays public — that's
+      // what "Track My Order" relies on with no login.
+      allow get: if true;
+      // Listing across ALL orders (admin dashboard) requires a real
+      // signed-in admin. A signed-in CUSTOMER may also list orders, but
+      // only when Firestore can prove every returned doc belongs to them —
+      // i.e. resource.data.customerUid matches their own auth uid. This is
+      // what powers "My Account" > order history (loadAccountOrderHistory()
+      // in script.js, which queries where('customerUid','==',uid)). It does
+      // NOT let a customer list other people's orders or browse the whole
+      // collection: Firestore only permits the request when the query's own
+      // filter already guarantees this condition for every possible result.
+      allow list: if isAdmin()
+        || (request.auth != null && resource.data.customerUid == request.auth.uid);
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'customerStatus', 'statusUpdatedAt']);
+      // Deletes now require a real signed-in admin too.
+      allow delete: if isAdmin();
+    }
+
+    // Customer profiles: created automatically right after a verified
+    // sign-in (see ensureCustomerProfile() in script.js) at /users/{uid}.
+    // A signed-in customer can only get or write their OWN profile doc by
+    // uid — never anyone else's, and never list the collection (no
+    // customer directory exposed to the client, same pattern as
+    // subscribers/complaints below).
+    match /users/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+      allow list, delete: if false;
+    }
+
+    // Product catalog: split into one collection per category
+    // (products_audio-speakers, products_smart-wearables, ...) instead of a
+    // single shared "products" collection — each category now has its own
+    // dedicated collection. Matched here via a wildcard + prefix check
+    // rather than one match block per category, so a brand-new category
+    // (and its collection) works immediately without a rules deploy.
+    // Public storefront needs to read products to display the catalog;
+    // writes (add/edit/delete a product) now require a real signed-in admin.
+    match /{collectionId}/{productId} {
+      allow read: if collectionId.matches('products_.*');
+      allow write: if collectionId.matches('products_.*') && isAdmin();
+    }
+
+    // Registry of which category collections exist (name + collection id),
+    // so every device/tab can discover and subscribe to all of them without
+    // a hardcoded category list anywhere in the app. Reads stay public;
+    // only an admin can add/rename/remove a category.
+    match /categories/{categorySlug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Newsletter/WhatsApp alert signups: visitors can submit their number,
+    // but clients cannot read the list back (same pattern as orders).
+    match /subscribers/{subscriberId} {
+      allow create: if true;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Customer complaints: visitors can submit an issue tied to a tracking code.
+    // Keep reads disabled from the public storefront; the current prototype
+    // admin console can use Firebase Console or authenticated admin tooling later.
+    match /complaints/{complaintId} {
+      allow create: if true;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Browser analytics events are write-only for visitors.
+    match /analytics_events/{eventId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // Coupons: customers need to read them at checkout to validate a code,
+    // and to redeem one (flip it to `used: true`) when they place an order
+    // with it applied (see redeemCouponInFirebase() in script.js). Only an
+    // admin can create/edit/delete a coupon outright. The one exception is
+    // that one-way "mark as used" flip: it's scoped so a customer can ONLY
+    // ever change the `used`/`usedAt` fields, and only from
+    // not-yet-used to used — never resurrect a used coupon, never touch
+    // its discount amount, expiry, or any other field.
+    match /coupons/{code} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used', 'usedAt'])
+          && resource.data.used != true
+          && request.resource.data.used == true
+        );
+    }
+
+    // Product reviews: anyone can post and read; "helpful" vote uses update.
+    // Deletes disabled so no one can wipe another customer's review.
+    match /reviews/{reviewId} {
+      allow read, create, update: if true;
+      allow delete: if false;
+    }
+  }
+}
