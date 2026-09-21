@@ -1,5 +1,16 @@
 require("dotenv").config();
 
+// On some Windows machines Node's own resolver (separate from the OS's, which
+// tools like nslookup/curl use) reports only 127.0.0.1 as a DNS server with
+// nothing listening there, so every lookup - including the SRV/TXT records an
+// `mongodb+srv://` URI needs - fails with ECONNREFUSED even though the machine
+// otherwise has working internet access. Pointing Node at public resolvers
+// directly sidesteps that broken default without touching any OS/network
+// settings. This runs here, rather than in config/db.js, so every entry
+// point that connects to MongoDB (the server and both seed scripts) is
+// covered - they all require this module first for MONGODB_URI anyway.
+require("dns").setServers(["8.8.8.8", "1.1.1.1"]);
+
 function required(name, fallback) {
   const value = process.env[name];
   if (value === undefined || value === "") {
