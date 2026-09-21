@@ -8,6 +8,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import ProductCard from "@/components/ProductCard";
 import StarRating from "@/components/StarRating";
 import JsonLd from "@/components/JsonLd";
+import Slider from "@/components/Slider";
 
 export const revalidate = 3600;
 
@@ -137,11 +138,13 @@ export default async function ProductPage({ params }) {
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="mb-6 font-heading text-xl font-bold text-white">You Might Also Like</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Slider label="related products">
             {related.map((p) => (
-              <ProductCard key={p._id} product={p} />
+              <div key={p._id} className="w-[220px] shrink-0 snap-start">
+                <ProductCard product={p} />
+              </div>
             ))}
-          </div>
+          </Slider>
         </section>
       )}
     </div>

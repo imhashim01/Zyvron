@@ -3,6 +3,11 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3
 export const FREE_SHIPPING_THRESHOLD = 3000;
 export const SHIPPING_FEE = 199;
 
+// Support WhatsApp number (Pakistan), in wa.me's required international
+// format: no leading 0, no "+", country code prepended.
+export const WHATSAPP_NUMBER = "923362345622";
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
 // Fallback category metadata (icon + display name + lifestyle photo) keyed by
 // slug, used to decorate categories fetched from the API and as a last
 // resort if the API is unreachable when rendering the home page category row.

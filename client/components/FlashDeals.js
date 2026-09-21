@@ -1,8 +1,7 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import FlashCountdown from "./FlashCountdown";
-import FlashDealsSlider from "./FlashDealsSlider";
-import CategoryIcon from "./CategoryIcon";
+import Slider from "./Slider";
 
 export default function FlashDeals({ products }) {
   if (!products.length) return null;
@@ -14,27 +13,36 @@ export default function FlashDeals({ products }) {
     .sort()[0];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-4">
-          <h2 className="flex items-center gap-2 font-heading text-xl font-bold text-white">
-            <CategoryIcon name="bolt" className="h-5 w-5 text-cyan-300" />
-            Flash Sale
+    <section
+      className="mx-auto max-w-7xl rounded-[24px] border px-4 py-8 sm:px-6"
+      style={{
+        borderColor: "rgba(0,195,255,0.28)",
+        background:
+          "radial-gradient(circle at 78% 15%, rgba(125,30,210,.13), transparent 38%), linear-gradient(120deg, #061722, #060d18 48%, #11091f)",
+      }}
+    >
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="font-heading text-xl font-bold text-white">
+            Flash Deals &amp; <span className="text-cyan-400">Top Discounts</span>
           </h2>
-          <FlashCountdown endsAt={endsAt} />
+          <p className="mt-1 text-sm text-white/50">Limited Stock • Up to 50% Off</p>
+          <div className="mt-3">
+            <FlashCountdown endsAt={endsAt} />
+          </div>
         </div>
-        <Link href="/category/all?filter=flash" className="text-sm text-cyan-300 hover:underline">
+        <Link href="/category/all?filter=flash" className="shrink-0 text-sm text-cyan-300 hover:underline">
           View all →
         </Link>
       </div>
 
-      <FlashDealsSlider>
+      <Slider label="flash deals">
         {products.map((p) => (
           <div key={p._id} className="w-[220px] shrink-0 snap-start">
             <ProductCard product={p} ribbon />
           </div>
         ))}
-      </FlashDealsSlider>
+      </Slider>
     </section>
   );
 }

@@ -1,51 +1,117 @@
-import Image from "next/image";
 import Link from "next/link";
+import Logo from "./ui/Logo";
+import Testimonials from "./Testimonials";
 import NewsletterForm from "./NewsletterForm";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
+
+const CATEGORY_LINKS = [
+  { href: "/category/audio-speakers", label: "Audio & Speakers" },
+  { href: "/category/smart-wearables", label: "Smart Wearables" },
+  { href: "/category/gaming-pc-accessories", label: "Gaming & PC" },
+  { href: "/category/mobile-accessories", label: "Mobile Accessories" },
+  { href: "/category/all?filter=flash", label: "⚡ Flash Deals (Up to 50% Off)" },
+];
+
+const SUPPORT_LINKS = [
+  { href: "/track-order", label: "🚚 Track My Order" },
+  { href: "/about", label: "📖 About Us" },
+  { href: "/contact", label: "📩 Contact Us" },
+  { href: "/faq", label: "❓ FAQ" },
+  { href: "/shipping-delivery", label: "📦 Shipping & Delivery" },
+  { href: "/warranty-support", label: "🛡️ Warranty & Support" },
+  { href: "/blog", label: "📰 Tech Tips Blog" },
+];
+
+const WHATSAPP_DISPLAY = `0${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5)}`;
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-white/10 bg-[#05060a]">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
+    <footer className="mt-16 bg-neutral-950 pb-6 pt-10">
+      <Testimonials />
+
+      <div className="mx-auto mt-10 grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:px-6 md:grid-cols-4">
         <div>
-          <div className="mb-3 flex items-center gap-2">
-            <Image src="/zyvron-icon.png" alt="Zyvron" width={28} height={28} className="rounded" />
-            <span className="font-heading text-lg font-bold text-white">Zyvron</span>
-          </div>
-          <p className="text-sm text-white/50">
-            Premium wireless audio, smartwatches, gaming gear &amp; smart mobile accessories —
-            cash on delivery &amp; free nationwide shipping on orders over Rs. 3,000.
+          <Logo size="md" href={null} />
+          <p className="mt-3 text-sm text-white/50">
+            Your trusted online destination for premium wireless audio, smartwatches, gaming gear &amp;
+            smart tech accessories in Pakistan.
+          </p>
+          <p className="mt-3 text-xs font-semibold text-cyan-300">
+            Direct Cash on Delivery Across Pakistan
           </p>
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-bold text-white">Shop</h4>
+          <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
+            Popular Categories
+          </h4>
           <ul className="space-y-2 text-sm text-white/60">
-            <li><Link href="/category/audio-speakers" className="hover:text-cyan-300">Audio & Speakers</Link></li>
-            <li><Link href="/category/smart-wearables" className="hover:text-cyan-300">Smart Wearables</Link></li>
-            <li><Link href="/category/gaming-pc-accessories" className="hover:text-cyan-300">Gaming & PC</Link></li>
-            <li><Link href="/category/mobile-accessories" className="hover:text-cyan-300">Mobile Accessories</Link></li>
+            {CATEGORY_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-cyan-300">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-bold text-white">Support</h4>
+          <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
+            Customer Support
+          </h4>
           <ul className="space-y-2 text-sm text-white/60">
-            <li><Link href="/track-order" className="hover:text-cyan-300">Track Order</Link></li>
-            <li><Link href="/account" className="hover:text-cyan-300">My Account</Link></li>
-            <li><Link href="/login" className="hover:text-cyan-300">Login / Register</Link></li>
+            {SUPPORT_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-cyan-300">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-cyan-300"
+              >
+                💬 WhatsApp: {WHATSAPP_DISPLAY}
+              </a>
+            </li>
+            <li>
+              <a href="mailto:zyvron.official@gmail.com" className="hover:text-cyan-300">
+                ✉️ zyvron.official@gmail.com
+              </a>
+            </li>
           </ul>
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-bold text-white">Stay Updated</h4>
+          <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
+            Stay Connected
+          </h4>
           <p className="mb-3 text-sm text-white/50">
-            Get restock &amp; flash-sale alerts on WhatsApp/SMS.
+            Receive flash sale alerts and exclusive discounts directly on your phone.
           </p>
           <NewsletterForm />
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/40">
-        © {new Date().getFullYear()} Zyvron Tech Accessories™. All rights reserved.
+
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center gap-2 border-t border-white/10 px-4 pt-6 text-xs text-white/40 sm:flex-row sm:justify-between sm:px-6">
+        <p>© {new Date().getFullYear()} Zyvron Tech Accessories™. All rights reserved.</p>
+        <div className="flex items-center gap-3">
+          <Link href="/privacy-policy" className="hover:text-cyan-300">
+            Privacy Policy
+          </Link>
+          <span>•</span>
+          <Link href="/terms" className="hover:text-cyan-300">
+            Terms of Service
+          </Link>
+          <span>•</span>
+          <Link href="/refund-policy" className="hover:text-cyan-300">
+            Refund Policy
+          </Link>
+        </div>
       </div>
     </footer>
   );

@@ -2,15 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cartContext";
 import { discountPercent, formatPKR } from "@/lib/format";
 import StarRating from "./StarRating";
 
 export default function ProductCard({ product, ribbon = false }) {
-  const { addToCart, wishlist, toggleWishlist } = useCart();
+  const { addToCart, startBuyNow, wishlist, toggleWishlist } = useCart();
+  const router = useRouter();
   const pct = discountPercent(product.price, product.compareAtPrice);
   const isWishlisted = wishlist.includes(product._id);
   const outOfStock = (product.stock ?? 1) <= 0;
+
+  function handleBuyNow() {
+    startBuyNow(product, 1);
+    router.push("/checkout");
+  }
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition hover:border-cyan-400/40 hover:bg-white/[0.06]">
@@ -83,14 +90,39 @@ export default function ProductCard({ product, ribbon = false }) {
           {pct && <span className="text-xs font-semibold text-emerald-400">{pct}% OFF</span>}
         </div>
 
-        <button
-          type="button"
-          disabled={outOfStock}
-          onClick={() => addToCart(product, 1)}
-          className="mt-2 w-full rounded-full bg-cyan-400 py-2 text-sm font-bold text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40"
-        >
-          {outOfStock ? "Out of stock" : "Add to Cart"}
-        </button>
+        {outOfStock ? (
+          <button
+            type="button"
+            disabled
+            className="mt-2 w-full rounded-full bg-white/10 py-2 text-sm font-bold text-white/40"
+          >
+            Out of stock
+          </button>
+        ) : (
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => addToCart(product, 1)}
+              aria-label="Add to cart"
+              title="Add to cart"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-400/50 py-2 text-xs font-bold text-cyan-300 transition hover:bg-cyan-400/10 sm:flex-none sm:px-3"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 8H6" />
+                <circle cx="9" cy="20" r="1.4" />
+                <circle cx="17" cy="20" r="1.4" />
+              </svg>
+              <span className="hidden sm:inline">Add to Cart</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleBuyNow}
+              className="flex-1 rounded-full bg-cyan-400 py-2 text-xs font-bold text-black transition hover:bg-cyan-300"
+            >
+              Buy Now
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

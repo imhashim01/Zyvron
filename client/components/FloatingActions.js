@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { WHATSAPP_URL } from "@/lib/constants";
 
 /**
  * Fixed bottom-right stack: support chat, AI assistant, scroll-to-top.
  * bottom-20 (mobile) clears the mobile-bottom-bar the way the reference site's
  * own stack does; bottom-6 on larger screens where there is no bottom bar.
  *
- * Neither the chat button nor the AI assistant have a real backend yet in
- * this rebuild (no WhatsApp Business number on file, no AI chat endpoint,
- * and no /contact page built yet either) - both surface an honest "coming
- * soon" notice instead of a dead link or a fake working feature. Swap in a
- * real destination for either once it exists.
+ * The AI assistant has no backend yet in this rebuild, so it surfaces an
+ * honest "coming soon" notice instead of a dead link or a fake working
+ * feature - swap in a real destination once one exists.
  */
 export default function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
@@ -45,10 +44,11 @@ export default function FloatingActions() {
         </div>
       )}
 
-      <button
-        type="button"
-        aria-label="Chat with support"
-        onClick={() => setNotice("Live chat coming soon")}
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
         className="flex h-[50px] w-[50px] items-center justify-center rounded-2xl text-white shadow-xl transition active:scale-95"
         style={{
           background: "rgb(16, 185, 129)",
@@ -63,7 +63,7 @@ export default function FloatingActions() {
             d="M21 12a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.4-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
           />
         </svg>
-      </button>
+      </a>
 
       <button
         type="button"
