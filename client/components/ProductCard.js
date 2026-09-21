@@ -6,7 +6,7 @@ import { useCart } from "@/lib/cartContext";
 import { discountPercent, formatPKR } from "@/lib/format";
 import StarRating from "./StarRating";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, ribbon = false }) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const pct = discountPercent(product.price, product.compareAtPrice);
   const isWishlisted = wishlist.includes(product._id);
@@ -31,10 +31,22 @@ export default function ProductCard({ product }) {
         </svg>
       </button>
 
-      {product.badge && (
-        <span className="absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
-          {product.badge}
+      {ribbon && pct ? (
+        <span
+          className="absolute left-3 top-3 z-10 rounded-md px-2.5 py-1 text-[11px] font-black text-white shadow"
+          style={{
+            background: "linear-gradient(90deg, #ff21a0, #704cff)",
+            boxShadow: "0 5px 15px rgba(190,40,220,0.2)",
+          }}
+        >
+          {pct}% OFF
         </span>
+      ) : (
+        product.badge && (
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
+            {product.badge}
+          </span>
+        )
       )}
 
       <Link href={`/product/${product.slug}`} className="block">

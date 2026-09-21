@@ -58,6 +58,14 @@ body {
   overflow: hidden;
 }
 
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Sitewide visible focus style. Every input in this app previously paired
    focus:outline-none with only a border-color change, which is not a
    reliable focus indicator (WCAG 2.4.7) - focus:outline-none has since been

@@ -67,7 +67,7 @@ const OLD_PRODUCTS = [
     ],
     tags: ["lamp", "rgb", "speaker", "charger", "gadgets"],
     inStock: true,
-    isFlashSale: false,
+    isFlashSale: true,
   },
   {
     id: "12-hd-mobile-screen-magnifier-foldable-phone-cinema-stand",
@@ -94,7 +94,7 @@ const OLD_PRODUCTS = [
     ],
     tags: ["screen magnifier", "cinema stand", "mobile accessories"],
     inStock: true,
-    isFlashSale: false,
+    isFlashSale: true,
   },
   {
     id: "zyvron-elite-titanium-anc-earbuds-pro-max",
@@ -149,7 +149,7 @@ const OLD_PRODUCTS = [
     ],
     tags: ["mic", "wireless mic", "k8 mic", "gadgets"],
     inStock: true,
-    isFlashSale: false,
+    isFlashSale: true,
   },
   {
     id: "portable-bluetooth-speaker-waterproof",
@@ -233,7 +233,7 @@ const OLD_PRODUCTS = [
     ],
     tags: ["smartwatch", "fitness watch", "wearable", "gadgets"],
     inStock: true,
-    isFlashSale: false,
+    isFlashSale: true,
   },
   {
     id: "rgb-wireless-gaming-mouse",
@@ -402,6 +402,10 @@ async function run() {
   }
   console.log(`[seed:products] ${categoryNames.length} categories ready`);
 
+  // A single shared deadline for every flash-sale product, so the homepage's
+  // countdown reflects one real "sale window" rather than a fake per-render timer.
+  const flashSaleEndsAt = new Date(Date.now() + 18 * 60 * 60 * 1000);
+
   let created = 0;
   let updated = 0;
   for (const old of OLD_PRODUCTS) {
@@ -423,6 +427,7 @@ async function run() {
       colors: old.colors || [],
       stock: old.inStock ? 50 : 0,
       isFlashSale: !!old.isFlashSale,
+      flashSaleEndsAt: old.isFlashSale ? flashSaleEndsAt : null,
       isActive: true,
     };
     const existed = await Product.exists({ slug });

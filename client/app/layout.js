@@ -4,6 +4,7 @@ import Providers from "@/components/Providers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
+import FloatingActions from "@/components/FloatingActions";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -73,6 +74,7 @@ export default function RootLayout({ children }) {
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <FloatingActions />
         </Providers>
       </body>
     </html>

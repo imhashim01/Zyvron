@@ -23,6 +23,7 @@ const productSchema = new mongoose.Schema(
     colors: { type: [colorSchema], default: [] },
     stock: { type: Number, default: 0, min: 0 },
     isFlashSale: { type: Boolean, default: false },
+    flashSaleEndsAt: { type: Date, default: null },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

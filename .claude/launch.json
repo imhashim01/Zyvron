@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "zyvron-client",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "client"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["client/node_modules/next/dist/bin/next", "dev", "client", "--turbopack"],
       "port": 3000
     }
   ]
