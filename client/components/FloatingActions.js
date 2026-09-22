@@ -4,17 +4,12 @@ import { useEffect, useState } from "react";
 import { WHATSAPP_URL } from "@/lib/constants";
 
 /**
- * Fixed bottom-right stack: support chat, AI assistant, scroll-to-top.
+ * Fixed bottom-right stack: support chat, scroll-to-top.
  * bottom-20 (mobile) clears the mobile-bottom-bar the way the reference site's
  * own stack does; bottom-6 on larger screens where there is no bottom bar.
- *
- * The AI assistant has no backend yet in this rebuild, so it surfaces an
- * honest "coming soon" notice instead of a dead link or a fake working
- * feature - swap in a real destination once one exists.
  */
 export default function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
-  const [notice, setNotice] = useState(null);
 
   useEffect(() => {
     function onScroll() {
@@ -25,12 +20,6 @@ export default function FloatingActions() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!notice) return;
-    const timer = setTimeout(() => setNotice(null), 2500);
-    return () => clearTimeout(timer);
-  }, [notice]);
-
   function scrollToTop() {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -38,12 +27,6 @@ export default function FloatingActions() {
 
   return (
     <div className="fixed bottom-20 right-4 z-30 flex flex-col items-end gap-2.5 sm:bottom-6 sm:right-6">
-      {notice && (
-        <div className="mr-1 rounded-xl border border-white/10 bg-[#0a1424] px-3 py-2 text-xs font-semibold text-white shadow-xl">
-          {notice}
-        </div>
-      )}
-
       <a
         href={WHATSAPP_URL}
         target="_blank"
@@ -64,22 +47,6 @@ export default function FloatingActions() {
           />
         </svg>
       </a>
-
-      <button
-        type="button"
-        aria-label="Ask AI Assistant"
-        onClick={() => setNotice("AI Assistant coming soon")}
-        className="relative flex h-[46px] w-[46px] items-center justify-center rounded-full text-white shadow-xl transition active:scale-95"
-        style={{
-          background: "linear-gradient(145deg, #8b5cf6, #4f46e5)",
-          boxShadow: "0 10px 30px rgba(99,102,241,0.3)",
-        }}
-      >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-          <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2Zm7 10 .9 2.6L22.5 15.5l-2.6.9L19 19l-.9-2.6-2.6-.9 2.6-.9L19 12Z" />
-        </svg>
-        <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-cyan-400 ring-2 ring-[#05060a]" />
-      </button>
 
       <button
         type="button"
