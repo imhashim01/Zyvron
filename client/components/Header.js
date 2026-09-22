@@ -173,7 +173,7 @@ export default function Header({ productCount }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+              className="w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
             />
           </div>
         </form>
@@ -242,20 +242,6 @@ export default function Header({ productCount }) {
               </Link>
             );
           })}
-
-          <div className="ml-auto hidden shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-2 pr-4 xl:flex">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-violet-300">
-              ✦
-            </span>
-            <span className="leading-tight">
-              <span className="block text-[11px] font-bold text-white">
-                FREE DELIVERY OVER RS. {FREE_SHIPPING_THRESHOLD.toLocaleString()}
-              </span>
-              <span className="block text-[10px] font-normal text-white/50">
-                NATIONWIDE • FAST &amp; RELIABLE
-              </span>
-            </span>
-          </div>
         </div>
       </div>
 
@@ -269,7 +255,7 @@ export default function Header({ productCount }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            className="w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
         </div>
       </form>

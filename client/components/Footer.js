@@ -2,7 +2,7 @@ import Link from "next/link";
 import Logo from "./ui/Logo";
 import Testimonials from "./Testimonials";
 import NewsletterForm from "./NewsletterForm";
-import { WHATSAPP_NUMBER } from "@/lib/constants";
+import { WHATSAPP_NUMBER, SUPPORT_EMAIL } from "@/lib/constants";
 
 const CATEGORY_LINKS = [
   { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
@@ -79,8 +79,8 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="mailto:zyvron.official@gmail.com" className="hover:text-cyan-300">
-                ✉️ zyvron.official@gmail.com
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-cyan-300">
+                ✉️ {SUPPORT_EMAIL}
               </a>
             </li>
           </ul>

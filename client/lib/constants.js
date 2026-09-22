@@ -7,6 +7,7 @@ export const SHIPPING_FEE = 199;
 // format: no leading 0, no "+", country code prepended.
 export const WHATSAPP_NUMBER = "923362345622";
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+export const SUPPORT_EMAIL = "zyvron.official@gmail.com";
 
 // Fallback category metadata (icon + display name + lifestyle photo + a short
 // tagline for the featured-collections card) keyed by slug, used to decorate
