@@ -14,6 +14,7 @@ const EMPTY_FORM = {
   description: "",
   stock: "10",
   isFlashSale: false,
+  isFeatured: false,
 };
 
 export default function AdminProductsPage() {
@@ -62,6 +63,7 @@ export default function AdminProductsPage() {
       description: p.description || "",
       stock: p.stock ?? 0,
       isFlashSale: !!p.isFlashSale,
+      isFeatured: !!p.isFeatured,
     });
     setEditingId(p._id);
     setShowForm(true);
@@ -188,6 +190,14 @@ export default function AdminProductsPage() {
               onChange={(e) => setForm((f) => ({ ...f, isFlashSale: e.target.checked }))}
             />
             Flash Sale
+          </label>
+          <label className="flex items-center gap-2 text-sm text-white/70">
+            <input
+              type="checkbox"
+              checked={form.isFeatured}
+              onChange={(e) => setForm((f) => ({ ...f, isFeatured: e.target.checked }))}
+            />
+            Featured (Homepage Hero)
           </label>
           <div className="flex gap-3 sm:col-span-2">
             <button type="submit" className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300">

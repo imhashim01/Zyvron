@@ -19,10 +19,11 @@ const SORTERS = {
 
 async function list(req, res, next) {
   try {
-    const { category, search, sort, page = 1, limit = 20, ids, flashSale } = req.query;
+    const { category, search, sort, page = 1, limit = 20, ids, flashSale, featured } = req.query;
     const filter = { isActive: true };
 
     if (flashSale === "true") filter.isFlashSale = true;
+    if (featured === "true") filter.isFeatured = true;
 
     if (ids) {
       const idList = String(ids)

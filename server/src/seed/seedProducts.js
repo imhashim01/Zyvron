@@ -123,6 +123,7 @@ const OLD_PRODUCTS = [
     tags: ["earbuds", "audio", "premium", "titanium", "anc", "flagship"],
     inStock: true,
     isFlashSale: false,
+    isFeatured: true,
   },
   {
     id: "k8-type-c-wireless-lavalier-microphone-portable-audio-video",
@@ -318,6 +319,7 @@ const OLD_PRODUCTS = [
     tags: ["smartwatch", "premium", "titanium", "wearable", "flagship"],
     inStock: true,
     isFlashSale: false,
+    isFeatured: true,
   },
   {
     id: "zyvron-mech-pro-hotswap-mechanical-keyboard",
@@ -346,6 +348,7 @@ const OLD_PRODUCTS = [
     tags: ["gaming keyboard", "mechanical keyboard", "premium", "rgb", "hot-swappable"],
     inStock: true,
     isFlashSale: false,
+    isFeatured: true,
   },
   {
     id: "zyvron-magcharge-pro-3in1-wireless-charging-stand",
@@ -374,6 +377,7 @@ const OLD_PRODUCTS = [
     tags: ["wireless charger", "charging stand", "premium", "mobile accessories"],
     inStock: true,
     isFlashSale: false,
+    isFeatured: true,
   },
 ];
 
@@ -428,6 +432,7 @@ async function run() {
       stock: old.inStock ? 50 : 0,
       isFlashSale: !!old.isFlashSale,
       flashSaleEndsAt: old.isFlashSale ? flashSaleEndsAt : null,
+      isFeatured: !!old.isFeatured,
       isActive: true,
     };
     const existed = await Product.exists({ slug });
