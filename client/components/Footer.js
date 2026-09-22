@@ -5,9 +5,9 @@ import NewsletterForm from "./NewsletterForm";
 import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 const CATEGORY_LINKS = [
-  { href: "/category/audio-speakers", label: "Audio & Speakers" },
+  { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
   { href: "/category/smart-wearables", label: "Smart Wearables" },
-  { href: "/category/gaming-pc-accessories", label: "Gaming & PC" },
+  { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
   { href: "/category/mobile-accessories", label: "Mobile Accessories" },
   { href: "/category/all?filter=flash", label: "⚡ Flash Deals (Up to 50% Off)" },
 ];

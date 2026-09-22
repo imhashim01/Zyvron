@@ -20,11 +20,21 @@ async function getProducts(params) {
 }
 
 export default async function HomePage() {
-  const [categories, flashSale, popular] = await Promise.all([
-    getCategories(),
+  const categories = await getCategories();
+  // Catalog is small (see productController's own "catalog is small" note),
+  // so one unpaginated fetch + client-side tally is both simpler and far
+  // less load than a separate count request per category.
+  const [flashSale, popular, allActive] = await Promise.all([
     getProducts({ flashSale: "true", limit: "8" }),
     getProducts({ sort: "popular", limit: "8" }),
+    getProducts({ limit: "100" }),
   ]);
+  const totalCount = allActive.length;
+  const counts = {};
+  for (const p of allActive) {
+    const slug = p.category?.slug;
+    if (slug) counts[slug] = (counts[slug] || 0) + 1;
+  }
 
   return (
     <div className="pt-4">
@@ -32,7 +42,7 @@ export default async function HomePage() {
         <Hero />
       </div>
 
-      <FeaturedCollections categories={categories} />
+      <FeaturedCollections categories={categories} totalCount={totalCount} counts={counts} />
 
       <FlashDeals products={flashSale} />
 

@@ -1,4 +1,7 @@
-require("dotenv").config();
+// Explicit path (rather than relying on dotenv's cwd-relative default) so this
+// loads server/.env correctly regardless of the working directory the process
+// was launched from.
+require("dotenv").config({ path: require("path").join(__dirname, "../../.env") });
 
 // On some Windows machines Node's own resolver (separate from the OS's, which
 // tools like nslookup/curl use) reports only 127.0.0.1 as a DNS server with

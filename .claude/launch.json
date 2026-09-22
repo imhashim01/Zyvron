@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["client/node_modules/next/dist/bin/next", "dev", "client", "--turbopack"],
       "port": 3000
+    },
+    {
+      "name": "zyvron-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/node_modules/nodemon/bin/nodemon.js", "server/src/server.js"],
+      "port": 5000
     }
   ]
 }

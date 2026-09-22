@@ -6,9 +6,9 @@ import { useCart } from "@/lib/cartContext";
 
 const CHIPS = [
   { slug: "all", label: "All Products" },
-  { slug: "audio-speakers", label: "Audio & Speakers" },
+  { slug: "audio-and-speakers", label: "Audio & Speakers" },
   { slug: "smart-wearables", label: "Smart Wearables" },
-  { slug: "gaming-pc-accessories", label: "Gaming & PC" },
+  { slug: "gaming-and-pc-accessories", label: "Gaming & PC" },
   { slug: "mobile-accessories", label: "Mobile Accessories" },
 ];
 

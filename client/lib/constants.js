@@ -8,35 +8,36 @@ export const SHIPPING_FEE = 199;
 export const WHATSAPP_NUMBER = "923362345622";
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
-// Fallback category metadata (icon + display name + lifestyle photo) keyed by
-// slug, used to decorate categories fetched from the API and as a last
-// resort if the API is unreachable when rendering the home page category row.
+// Fallback category metadata (icon + display name + lifestyle photo + a short
+// tagline for the featured-collections card) keyed by slug, used to decorate
+// categories fetched from the API and as a last resort if the API is
+// unreachable when rendering the home page category row. Categories without
+// a tagline fall back to showing their real product count instead.
 export const CATEGORY_META = {
-  "audio-speakers": {
+  "audio-and-speakers": {
     name: "Audio & Speakers",
     icon: "headphones",
-    image: "https://images.unsplash.com/photo-1507878566509-a0dbe19677a5?w=400&q=80&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1507878566509-a0dbe19677a5?w=600&q=80&auto=format&fit=crop",
+    tagline: "Premium Sound. Higher Vibes.",
   },
   "smart-wearables": {
     name: "Smart Wearables",
     icon: "watch",
-    image: "https://images.unsplash.com/photo-1617043983671-adaadcaa2460?w=400&q=80&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1617043983671-adaadcaa2460?w=600&q=80&auto=format&fit=crop",
+    tagline: "Track. Health. Lifestyle.",
   },
-  "gaming-pc-accessories": {
+  "gaming-and-pc-accessories": {
     name: "Gaming & PC Accessories",
     icon: "gamepad",
-    image: "https://images.unsplash.com/photo-1598662779094-110c2bad80b5?w=400&q=80&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1598662779094-110c2bad80b5?w=600&q=80&auto=format&fit=crop",
   },
   "mobile-accessories": {
     name: "Mobile Accessories",
     icon: "phone",
-    image: "https://images.unsplash.com/photo-1737882171913-f4ced0ce73d8?w=400&q=80&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1737882171913-f4ced0ce73d8?w=600&q=80&auto=format&fit=crop",
+    tagline: "Connect. Protect. Enhance.",
   },
 };
-
-// Used for the "All Products" tile at the front of the featured-collections row.
-export const ALL_PRODUCTS_IMAGE =
-  "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?auto=format&fit=crop&w=400&q=80";
 
 export const FALLBACK_CATEGORIES = Object.entries(CATEGORY_META).map(([slug, meta]) => ({
   _id: slug,
