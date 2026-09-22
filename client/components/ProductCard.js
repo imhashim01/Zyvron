@@ -20,7 +20,7 @@ export default function ProductCard({ product, ribbon = false }) {
   }
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition hover:border-cyan-400/40 hover:bg-white/[0.06]">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.045] to-white/[0.01] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:bg-white/[0.06] hover:shadow-[0_18px_36px_rgba(0,217,255,0.14)]">
       <button
         type="button"
         onClick={() => toggleWishlist(product._id)}
@@ -117,7 +117,7 @@ export default function ProductCard({ product, ribbon = false }) {
             <button
               type="button"
               onClick={handleBuyNow}
-              className="flex-1 rounded-full bg-cyan-400 py-2 text-xs font-bold text-black transition hover:bg-cyan-300"
+              className="flex-1 rounded-full bg-cyan-400 py-2 text-xs font-bold text-black transition duration-200 hover:scale-[1.03] hover:bg-cyan-300 hover:shadow-[0_8px_20px_rgba(0,217,255,0.35)] active:scale-95"
             >
               Buy Now
             </button>

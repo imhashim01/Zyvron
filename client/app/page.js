@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import FeaturedCollections from "@/components/FeaturedCollections";
 import FlashDeals from "@/components/FlashDeals";
 import ProductCard from "@/components/ProductCard";
+import Reveal from "@/components/Reveal";
 
 export const revalidate = 3600;
 
@@ -46,7 +47,7 @@ export default async function HomePage() {
 
       <FlashDeals products={flashSale} />
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <Reveal as="section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-heading text-xl font-bold text-white">Popular Right Now</h2>
           <Link href="/category/all" className="text-sm text-cyan-300 hover:underline">
@@ -55,8 +56,10 @@ export default async function HomePage() {
         </div>
         {popular.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {popular.map((p) => (
-              <ProductCard key={p._id} product={p} />
+            {popular.map((p, i) => (
+              <div key={p._id} className="stagger-item" style={{ "--stagger-delay": `${i * 60}ms` }}>
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         ) : (
@@ -64,7 +67,7 @@ export default async function HomePage() {
             Products will appear here once the catalog is loaded.
           </p>
         )}
-      </section>
+      </Reveal>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import FlashCountdown from "./FlashCountdown";
 import Slider from "./Slider";
+import Reveal from "./Reveal";
 
 export default function FlashDeals({ products }) {
   if (!products.length) return null;
@@ -13,8 +14,9 @@ export default function FlashDeals({ products }) {
     .sort()[0];
 
   return (
-    <section
-      className="mx-auto max-w-7xl rounded-[24px] border px-4 py-8 sm:px-6"
+    <Reveal
+      as="section"
+      className="relative mx-auto max-w-7xl overflow-hidden rounded-[24px] border px-4 py-8 sm:px-6"
       style={{
         borderColor: "rgba(0,195,255,0.28)",
         background:
@@ -37,12 +39,16 @@ export default function FlashDeals({ products }) {
       </div>
 
       <Slider label="flash deals">
-        {products.map((p) => (
-          <div key={p._id} className="w-[220px] shrink-0 snap-start">
+        {products.map((p, i) => (
+          <div
+            key={p._id}
+            className="stagger-item w-[220px] shrink-0 snap-start"
+            style={{ "--stagger-delay": `${i * 60}ms` }}
+          >
             <ProductCard product={p} ribbon />
           </div>
         ))}
       </Slider>
-    </section>
+    </Reveal>
   );
 }

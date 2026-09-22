@@ -3,15 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "@/lib/authContext";
 import { useCart } from "@/lib/cartContext";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 const NAV_LINKS = [
+  { href: "/category/all", label: "All Catalog", match: (p) => p === "/" || p === "/category/all" },
   { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
   { href: "/category/smart-wearables", label: "Smart Wearables" },
   { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
+  { href: "/category/all?filter=flash", label: "⚡ Flash Sale", accent: true },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/track-order", label: "📦 Track Order" },
 ];
 
 function SearchIcon() {
@@ -23,12 +29,111 @@ function SearchIcon() {
   );
 }
 
+function HamburgerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * Rendered via a portal straight into document.body - the header has
+ * backdrop-blur, and any ancestor with a filter/backdrop-filter/transform
+ * becomes the containing block for position:fixed descendants, which would
+ * otherwise shrink this overlay down to the header's own height instead of
+ * the full viewport.
+ */
+function MobileSidebar({ open, onClose, pathname }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      aria-hidden={!open}
+      className={`fixed inset-0 z-50 transition-opacity duration-300 md:hidden ${
+        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+      }`}
+    >
+      <div onClick={onClose} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        className={`absolute inset-y-0 left-0 flex w-[80%] max-w-xs flex-col border-r border-white/10 bg-[#05060a] transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <span className="flex items-center gap-2">
+            <Image src="/zyvron-icon.png" alt="Zyvron" width={28} height={28} className="rounded" />
+            <span className="font-heading text-base font-bold text-white">Zyvron</span>
+          </span>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close menu"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
+          {NAV_LINKS.map((link) => {
+            const isActive = link.match ? link.match(pathname) : pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+                  link.accent
+                    ? "text-amber-400 hover:bg-amber-400/10"
+                    : isActive
+                    ? "bg-cyan-400/10 text-cyan-300"
+                    : "text-white/80 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-white/10 px-5 py-4 text-xs text-white/50">
+          Free delivery over Rs. {FREE_SHIPPING_THRESHOLD.toLocaleString()} • Nationwide COD
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export default function Header({ productCount }) {
   const { count } = useCart();
   const { user, isAdmin, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close the sidebar whenever the route changes, and on Escape.
+  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onKey(e) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   function onSearch(e) {
     e.preventDefault();
@@ -36,12 +141,21 @@ export default function Header({ productCount }) {
     router.push(q ? `/category/all?search=${encodeURIComponent(q)}` : "/category/all");
   }
 
-  const isAllCatalog = pathname === "/" || pathname === "/category/all";
   const searchPlaceholder = productCount ? `Search ${productCount}+ products…` : "Search products…";
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#05060a]/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white md:hidden"
+        >
+          <HamburgerIcon />
+        </button>
+
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image src="/zyvron-icon.png" alt="Zyvron" width={32} height={32} className="rounded" />
           <span className="hidden font-heading text-lg font-bold text-white sm:block">
@@ -110,36 +224,24 @@ export default function Header({ productCount }) {
 
       <div className="hidden border-t border-white/10 md:block">
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-2.5 text-sm font-semibold text-white/70 sm:px-6">
-          <Link
-            href="/category/all"
-            className={`flex items-center gap-2 pb-0.5 ${
-              isAllCatalog ? "border-b-2 border-cyan-400 text-white" : "hover:text-white"
-            }`}
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-            </svg>
-            All Catalog
-          </Link>
-
-          {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="whitespace-nowrap hover:text-white">
-              {link.label}
-            </Link>
-          ))}
-
-          <Link href="/category/all?filter=flash" className="whitespace-nowrap text-amber-400 hover:text-amber-300">
-            ⚡ Flash Sale
-          </Link>
-          <Link href="/about" className="whitespace-nowrap hover:text-white">
-            About
-          </Link>
-          <Link href="/contact" className="whitespace-nowrap hover:text-white">
-            Contact
-          </Link>
-          <Link href="/track-order" className="whitespace-nowrap hover:text-white">
-            📦 Track Order
-          </Link>
+          {NAV_LINKS.map((link) => {
+            const isActive = link.match ? link.match(pathname) : pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`whitespace-nowrap pb-0.5 transition ${
+                  link.accent
+                    ? "text-amber-400 hover:text-amber-300"
+                    : isActive
+                    ? "border-b-2 border-cyan-400 text-white"
+                    : "hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           <div className="ml-auto hidden shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-2 pr-4 xl:flex">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-violet-300">
@@ -171,6 +273,8 @@ export default function Header({ productCount }) {
           />
         </div>
       </form>
+
+      <MobileSidebar open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname} />
     </header>
   );
 }

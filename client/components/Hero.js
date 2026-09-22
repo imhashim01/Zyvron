@@ -58,11 +58,29 @@ export default function Hero() {
         }}
       />
 
+      {/* slow-floating ambient glow orbs, for depth */}
+      <div
+        aria-hidden="true"
+        className="animate-float-slow pointer-events-none absolute -left-16 top-0 h-72 w-72 rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle, rgba(176,38,255,0.22), transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="animate-float-slow delay-2 pointer-events-none absolute -right-10 bottom-0 h-64 w-64 rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle, rgba(0,229,255,0.18), transparent 70%)" }}
+      />
+
       <div className="relative grid gap-12 px-6 py-14 sm:px-10 sm:py-16 lg:grid-cols-2 lg:items-center lg:gap-8">
-        <div className="text-center lg:text-left">
+        <div
+          className="text-center lg:text-left"
+          style={{ animation: "fade-in-up 0.8s ease both" }}
+        >
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
-            style={{ background: "linear-gradient(90deg, #00c6ff, #a855f7)" }}
+            className="animate-pulse-glow inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
+            style={{
+              background: "linear-gradient(90deg, #00c6ff, #a855f7)",
+              boxShadow: "0 0 24px rgba(0,198,255,0.45)",
+            }}
           >
             <span aria-hidden="true">⚡</span> Titanium Ultra
           </span>
@@ -86,7 +104,7 @@ export default function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-5 lg:justify-start">
             <Link
               href="/category/smart-wearables"
-              className="rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition active:scale-95"
+              className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,217,255,0.4)] active:scale-95"
               style={{ background: "linear-gradient(90deg, #00e5ff, #a855f7)" }}
             >
               Shop Wearables →
@@ -97,16 +115,19 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-sm items-center justify-center py-4 lg:max-w-none lg:py-0">
+        <div
+          className="relative mx-auto flex w-full max-w-sm items-center justify-center py-4 lg:max-w-none lg:py-0"
+          style={{ animation: "fade-in-up 0.9s ease 0.15s both" }}
+        >
           <div
-            className="relative aspect-square w-full max-w-[320px] rounded-full p-10"
+            className="animate-pulse-glow relative aspect-square w-full max-w-[320px] rounded-full p-10"
             style={{
               background:
                 "radial-gradient(circle, rgba(0,229,255,0.18) 0%, rgba(176,38,255,0.12) 55%, transparent 75%)",
             }}
           >
             <div
-              className="relative h-full w-full overflow-hidden rounded-[42px] border-2"
+              className="relative h-full w-full overflow-hidden rounded-[42px] border-2 transition-transform duration-500 hover:scale-[1.02]"
               style={{
                 borderColor: "rgba(255,255,255,0.15)",
                 boxShadow: "0 0 60px rgba(0,229,255,0.25), 0 0 100px rgba(176,38,255,0.15)",
@@ -124,10 +145,11 @@ export default function Hero() {
           </div>
 
           <div className="mt-6 flex w-full max-w-[320px] flex-col gap-3 sm:absolute sm:inset-y-0 sm:right-0 sm:mt-0 sm:w-44 sm:justify-center sm:gap-3 lg:-right-4">
-            {STATS.map((s) => (
+            {STATS.map((s, i) => (
               <div
                 key={s.label}
-                className="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-[#0a1522]/90 px-3.5 py-2.5 backdrop-blur"
+                className="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-[#0a1522]/90 px-3.5 py-2.5 backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-white/25"
+                style={{ animation: `fade-in-up 0.6s ease ${0.35 + i * 0.12}s both` }}
               >
                 <span
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"

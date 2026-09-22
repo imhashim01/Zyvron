@@ -1,19 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CATEGORY_META } from "@/lib/constants";
+import Reveal from "./Reveal";
 
 function CollectionCard({ href, image, name, tagline, count }) {
   return (
     <Link
       href={href}
-      className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10"
+      className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:shadow-[0_18px_40px_rgba(0,217,255,0.18)]"
     >
       <Image
         src={image}
         alt=""
         fill
         sizes="(min-width: 1024px) 25vw, 50vw"
-        className="object-cover transition duration-300 group-hover:scale-105"
+        className="object-cover transition duration-500 group-hover:scale-110"
       />
       <div
         aria-hidden="true"
@@ -22,6 +23,11 @@ function CollectionCard({ href, image, name, tagline, count }) {
           background:
             "linear-gradient(to top, rgba(4,8,15,0.92) 12%, rgba(4,8,15,0.2) 55%, transparent 78%)",
         }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{ boxShadow: "inset 0 0 0 1px rgba(0,229,255,0.5)" }}
       />
       <div className="absolute inset-x-0 bottom-0 p-4">
         <h3 className="font-heading text-base font-bold text-white">{name}</h3>
@@ -35,7 +41,7 @@ function CollectionCard({ href, image, name, tagline, count }) {
 
 export default function FeaturedCollections({ categories, totalCount = 0, counts = {} }) {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <Reveal as="section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="mb-5 flex items-end justify-between">
         <div>
           <h2 className="font-heading text-xl font-black uppercase tracking-tight text-white sm:text-2xl">
@@ -49,20 +55,21 @@ export default function FeaturedCollections({ categories, totalCount = 0, counts
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {categories.map((cat) => {
+        {categories.map((cat, i) => {
           const meta = CATEGORY_META[cat.slug];
           return (
-            <CollectionCard
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              image={cat.image || meta?.image}
-              name={cat.name || meta?.name}
-              tagline={meta?.tagline}
-              count={counts[cat.slug] ?? 0}
-            />
+            <div key={cat.slug} className="stagger-item" style={{ "--stagger-delay": `${i * 80}ms` }}>
+              <CollectionCard
+                href={`/category/${cat.slug}`}
+                image={cat.image || meta?.image}
+                name={cat.name || meta?.name}
+                tagline={meta?.tagline}
+                count={counts[cat.slug] ?? 0}
+              />
+            </div>
           );
         })}
       </div>
-    </section>
+    </Reveal>
   );
 }
