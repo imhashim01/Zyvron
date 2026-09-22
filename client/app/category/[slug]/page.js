@@ -6,7 +6,6 @@ import FreeShippingBar from "@/components/FreeShippingBar";
 import ProductCard from "@/components/ProductCard";
 import WishlistGrid from "@/components/WishlistGrid";
 import JsonLd from "@/components/JsonLd";
-import ProductsToolbar from "@/components/ProductsToolbar";
 import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 3600;
@@ -60,7 +59,7 @@ export default async function CategoryPage({ params, searchParams }) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <JsonLd data={breadcrumbJsonLd} />
-      <ProductsToolbar title={name} />
+      <h1 className="mb-4 font-heading text-2xl font-bold text-white">{name}</h1>
       <FreeShippingBar />
       <Suspense>
         <CategoryFilters activeSlug={slug} />
