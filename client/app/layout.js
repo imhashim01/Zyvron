@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import FloatingActions from "@/components/FloatingActions";
+import { serverFetch } from "@/lib/api";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -45,7 +46,10 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const productsData = await serverFetch("/products?limit=1");
+  const productCount = productsData?.total || null;
+
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -71,7 +75,7 @@ export default function RootLayout({ children }) {
         <JsonLd data={orgJsonLd} />
         <JsonLd data={siteJsonLd} />
         <Providers>
-          <Header />
+          <Header productCount={productCount} />
           <main className="flex-1">{children}</main>
           <Footer />
           <FloatingActions />
