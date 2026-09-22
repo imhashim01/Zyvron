@@ -4,14 +4,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/lib/cartContext";
 
-const CHIPS = [
-  { slug: "all", label: "All Products" },
-  { slug: "audio-and-speakers", label: "Audio & Speakers" },
-  { slug: "smart-wearables", label: "Smart Wearables" },
-  { slug: "gaming-and-pc-accessories", label: "Gaming & PC" },
-  { slug: "mobile-accessories", label: "Mobile Accessories" },
-];
-
 const SORTS = [
   { value: "popular", label: "Most Popular" },
   { value: "price-low", label: "Price: Low to High" },
@@ -20,14 +12,13 @@ const SORTS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-export default function CategoryFilters({ activeSlug }) {
+export default function CategoryFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { wishlist } = useCart();
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  const isFlash = searchParams.get("filter") === "flash";
   const isWishlist = searchParams.get("filter") === "wishlist";
 
   function goto(slug, extra = {}) {
@@ -55,29 +46,23 @@ export default function CategoryFilters({ activeSlug }) {
   }
 
   return (
-    <div className="mb-6 space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {CHIPS.map((c) => (
-          <button
-            key={c.slug}
-            onClick={() => goto(c.slug)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-              activeSlug === c.slug && !isFlash && !isWishlist
-                ? "bg-cyan-400 text-black"
-                : "bg-white/5 text-white/70 hover:bg-white/10"
-            }`}
-          >
-            {c.label}
-          </button>
-        ))}
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <form onSubmit={onSearchSubmit} className="flex w-full max-w-sm gap-2">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search this category…"
+          className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+        />
         <button
-          onClick={() => goto("all", { filter: "flash" })}
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-            isFlash ? "bg-cyan-400 text-black" : "bg-white/5 text-white/70 hover:bg-white/10"
-          }`}
+          type="submit"
+          className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
         >
-          ⚡ Flash Sale
+          Search
         </button>
+      </form>
+
+      <div className="flex items-center gap-2">
         <button
           onClick={() => goto("all", { filter: "wishlist" })}
           className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
@@ -86,23 +71,6 @@ export default function CategoryFilters({ activeSlug }) {
         >
           ♥ Wishlist ({wishlist.length})
         </button>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={onSearchSubmit} className="flex w-full max-w-sm gap-2">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search this category…"
-            className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
-          />
-          <button
-            type="submit"
-            className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
-          >
-            Search
-          </button>
-        </form>
 
         <select
           defaultValue={searchParams.get("sort") || "popular"}

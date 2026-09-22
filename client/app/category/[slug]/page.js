@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { serverFetch } from "@/lib/api";
 import { CATEGORY_META } from "@/lib/constants";
 import CategoryFilters from "@/components/CategoryFilters";
-import FreeShippingBar from "@/components/FreeShippingBar";
 import ProductCard from "@/components/ProductCard";
 import WishlistGrid from "@/components/WishlistGrid";
 import JsonLd from "@/components/JsonLd";
@@ -28,8 +27,9 @@ export default async function CategoryPage({ params, searchParams }) {
   if (filter === "wishlist") {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <h1 className="mb-4 font-heading text-2xl font-bold text-white">My Wishlist</h1>
         <Suspense>
-          <CategoryFilters activeSlug={slug} />
+          <CategoryFilters />
         </Suspense>
         <WishlistGrid />
       </div>
@@ -60,9 +60,8 @@ export default async function CategoryPage({ params, searchParams }) {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <JsonLd data={breadcrumbJsonLd} />
       <h1 className="mb-4 font-heading text-2xl font-bold text-white">{name}</h1>
-      <FreeShippingBar />
       <Suspense>
-        <CategoryFilters activeSlug={slug} />
+        <CategoryFilters />
       </Suspense>
 
       {products.length > 0 ? (
