@@ -4,7 +4,7 @@ const Coupon = require("../models/Coupon");
 const { generateOrderNumber } = require("../utils/orderNumber");
 const { normalizePhone } = require("../utils/phone");
 const { checkCoupon } = require("./couponController");
-const { sendOrderConfirmationEmail, sendOrderStatusEmail } = require("../utils/sendEmail");
+const { sendOrderConfirmationEmail, sendOrderStatusEmail, sendAdminNewOrderEmail } = require("../utils/sendEmail");
 
 const FREE_SHIPPING_THRESHOLD = 3000;
 const SHIPPING_FEE = 199;
@@ -130,6 +130,7 @@ async function create(req, res, next) {
     }
 
     sendOrderConfirmationEmail(order).catch(() => {});
+    sendAdminNewOrderEmail(order).catch(() => {});
 
     res.status(201).json({ order });
   } catch (err) {

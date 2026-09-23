@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { smtp, clientUrl } = require("../config/env");
+const { smtp, clientUrl, orderNotifyEmail } = require("../config/env");
 
 let transporter = null;
 
@@ -67,10 +67,10 @@ function sendOrderConfirmationEmail(order) {
   const trackUrl = `${clientUrl}/track-order?orderNumber=${encodeURIComponent(order.orderNumber)}`;
   return sendEmail({
     to: order.customer.email,
-    subject: `Your order has been received — Zyvron (${order.orderNumber})`,
+    subject: `Thank you for your order — Zyvron (${order.orderNumber})`,
     html: wrap(
-      "Your order has been received",
-      `<p>Hi ${order.customer.name}, thanks for your order <strong>${order.orderNumber}</strong>. We've received it and will get it to you soon.</p>
+      "Thank you for ordering!",
+      `<p>Hi ${order.customer.name}, thank you for ordering with Zyvron. We've received your order <strong>${order.orderNumber}</strong> and will get it to you soon.</p>
        <ul>${itemsHtml}</ul>
        <p>Subtotal: Rs. ${order.subtotal}<br/>Discount: Rs. ${order.discount}<br/>Shipping: Rs. ${order.shippingFee}<br/><strong>Total: Rs. ${order.total}</strong></p>
        <p>Payment method: ${order.paymentMethod}</p>
@@ -92,10 +92,32 @@ function sendOrderStatusEmail(order) {
   });
 }
 
+/** Internal notification to the store owner every time a new order comes in - not customer-facing. */
+function sendAdminNewOrderEmail(order) {
+  const itemsHtml = order.items
+    .map((i) => `<li>${i.title} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
+    .join("");
+  return sendEmail({
+    to: orderNotifyEmail,
+    subject: `New order ${order.orderNumber} from ${order.customer.name}`,
+    html: wrap(
+      "New order placed",
+      `<p><strong>${order.customer.name}</strong> placed order <strong>${order.orderNumber}</strong>.</p>
+       <p>Phone: ${order.customer.phone}<br/>
+       Email: ${order.customer.email || "-"}<br/>
+       Address: ${order.customer.address}, ${order.customer.city}</p>
+       <ul>${itemsHtml}</ul>
+       <p>Subtotal: Rs. ${order.subtotal}<br/>Discount: Rs. ${order.discount}<br/>Shipping: Rs. ${order.shippingFee}<br/><strong>Total: Rs. ${order.total}</strong></p>
+       <p>Payment method: ${order.paymentMethod}</p>`
+    ),
+  });
+}
+
 module.exports = {
   sendEmail,
   sendWelcomeEmail,
   sendResetPasswordEmail,
   sendOrderConfirmationEmail,
   sendOrderStatusEmail,
+  sendAdminNewOrderEmail,
 };

@@ -1,4 +1,5 @@
 const express = require("express");
+const dashboard = require("../controllers/adminController");
 const orders = require("../controllers/orderController");
 const coupons = require("../controllers/couponController");
 const subscribers = require("../controllers/subscriberController");
@@ -11,6 +12,8 @@ const couponValidators = require("../validators/couponValidators");
 const router = express.Router();
 
 router.use(protect, requireAdmin);
+
+router.get("/summary", dashboard.summary);
 
 router.get("/orders", orders.adminList);
 router.get("/orders/export.csv", orders.exportCsv);

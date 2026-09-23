@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+    brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", default: null },
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, min: 0 },
     rating: { type: Number, default: 4.5, min: 0, max: 5 },

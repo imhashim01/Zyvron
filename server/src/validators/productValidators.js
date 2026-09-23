@@ -5,6 +5,7 @@ const baseFields = [
   body("compareAtPrice").optional({ checkFalsy: true }).isFloat({ min: 0 }),
   body("stock").optional().isInt({ min: 0 }).withMessage("stock must be a non-negative integer"),
   body("category").optional().isMongoId().withMessage("category must be a valid id"),
+  body("brand").optional({ checkFalsy: true }).isMongoId().withMessage("brand must be a valid id"),
   body("image").optional().trim().notEmpty(),
   body("images").optional().isArray(),
   body("features").optional().isArray(),

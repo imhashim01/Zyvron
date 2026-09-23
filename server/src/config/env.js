@@ -47,4 +47,18 @@ module.exports = {
     password: process.env.ADMIN_PASSWORD || "",
     name: process.env.ADMIN_NAME || "Zyvron Admin",
   },
+  // Where the "a customer just placed an order" notification email goes.
+  // Separate from admin.email above, which is the seeded admin's *login*
+  // address - the two don't have to be the same inbox.
+  orderNotifyEmail: process.env.ORDER_NOTIFY_EMAIL || "zyvron.official@gmail.com",
+  // Used to auto-mirror any external image URL (Google Images, etc.) pasted
+  // into an admin form into our own Cloudinary account - see
+  // utils/cloudinaryUpload.js. Get these from the Cloudinary dashboard
+  // (cloudinary.com -> Dashboard, after creating a free account) and put
+  // them in server/.env; left blank, image URLs are just saved as typed.
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
+    apiKey: process.env.CLOUDINARY_API_KEY || "",
+    apiSecret: process.env.CLOUDINARY_API_SECRET || "",
+  },
 };

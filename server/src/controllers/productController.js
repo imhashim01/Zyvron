@@ -10,6 +10,13 @@ function slugifyTitle(title) {
     .replace(/(^-|-$)/g, "");
 }
 
+// An empty-string brand (the admin form's "No brand" option) would otherwise
+// fail Mongoose's ObjectId cast on create/update - normalize it to null,
+// which is what "no brand" actually means in the schema.
+function normalizeBrand(body) {
+  if (body.brand === "") body.brand = null;
+}
+
 const SORTERS = {
   popular: { reviewsCount: -1 },
   "price-low": { price: 1 },
@@ -50,7 +57,7 @@ async function list(req, res, next) {
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
 
-    let query = Product.find(filter).populate("category", "name slug");
+    let query = Product.find(filter).populate("category", "name slug").populate("brand", "name slug logo");
 
     if (sort === "discount") {
       // discount % isn't stored, so pull then sort in memory (catalog is small)
@@ -80,7 +87,9 @@ async function list(req, res, next) {
 
 async function getBySlug(req, res, next) {
   try {
-    const product = await Product.findOne({ slug: req.params.slug, isActive: true }).populate("category", "name slug");
+    const product = await Product.findOne({ slug: req.params.slug, isActive: true })
+      .populate("category", "name slug")
+      .populate("brand", "name slug logo");
     if (!product) return res.status(404).json({ message: "Product not found" });
     res.status(200).json({ product });
   } catch (err) {
@@ -92,6 +101,7 @@ async function create(req, res, next) {
   try {
     const body = req.body;
     if (!body.slug && body.title) body.slug = slugifyTitle(body.title);
+    normalizeBrand(body);
     const product = await Product.create(body);
     res.status(201).json(product);
   } catch (err) {
@@ -103,6 +113,7 @@ async function update(req, res, next) {
   try {
     const body = req.body;
     if (body.title && !body.slug) body.slug = slugifyTitle(body.title);
+    normalizeBrand(body);
     const product = await Product.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!product) return res.status(404).json({ message: "Product not found" });
     res.status(200).json(product);

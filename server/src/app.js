@@ -17,10 +17,19 @@ const orderRoutes = require("./routes/orderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const subscriberRoutes = require("./routes/subscriberRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
+const brandRoutes = require("./routes/brandRoutes");
 
 const app = express();
 
-app.use(helmet());
+// crossOriginResourcePolicy must be relaxed to "cross-origin": the frontend
+// (localhost:3000) and this API (localhost:5000) are different origins by the
+// browser's definition (different port), so helmet's default same-origin CORP
+// header silently blocks every fetch from the client with a generic "Failed
+// to fetch" - this is a separate browser mechanism from CORS below, and the
+// `cors` middleware alone does not turn it off.
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(cors({ origin: clientUrl, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -40,6 +49,9 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/subscribers", subscriberRoutes);
 app.use("/api/complaints", complaintRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/brands", brandRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

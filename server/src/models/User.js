@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date, select: false },
     addresses: [addressSchema],
     cart: [cartItemSchema],
+    // Product ids only (no quantity) — mirrors how the client already stores
+    // its localStorage wishlist as a plain array of ids, so no shape
+    // translation is needed between the two.
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   },
   { timestamps: true }
 );
