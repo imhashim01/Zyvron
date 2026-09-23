@@ -4,7 +4,7 @@
   "description": "Zyvron Tech Accessories - Express + MongoDB API",
   "main": "src/server.js",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node src/server.js",
