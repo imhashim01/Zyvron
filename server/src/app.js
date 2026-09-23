@@ -23,6 +23,15 @@ const brandRoutes = require("./routes/brandRoutes");
 
 const app = express();
 
+// Both Vercel (in front of the serverless function) and most other hosts
+// (Render, Railway, ...) sit this app behind a reverse proxy that terminates
+// TLS and forwards the real client IP via X-Forwarded-For. Without this,
+// express-rate-limit below can't safely trust that header (it validates the
+// proxy chain and throws ERR_ERL_UNEXPECTED_X_FORWARDED_FOR otherwise), and
+// req.ip/req.secure would reflect the proxy, not the visitor. "1" trusts
+// exactly one hop, matching a single reverse proxy in front of this app.
+app.set("trust proxy", 1);
+
 // crossOriginResourcePolicy must be relaxed to "cross-origin": the frontend
 // (localhost:3000) and this API (localhost:5000) are different origins by the
 // browser's definition (different port), so helmet's default same-origin CORP
