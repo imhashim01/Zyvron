@@ -161,6 +161,91 @@ body {
   border-radius: 8px;
 }
 
+/* Neon accent glow - added per Mohammad's "site looks too dark" feedback
+   (Session 14), then turned up per his follow-up that the "Subtle" pass
+   wasn't enough. Still scoped to interactive/attention elements only (nav,
+   buttons, badges, prices) rather than repainting the dark-navy canvas
+   itself - but glow is now stronger throughout, and key CTAs/badges/prices
+   carry a persistent (always-on, not just hover) glow instead of only
+   lighting up on interaction. A tight bright core plus a soft outer bloom
+   (layered box-shadow/text-shadow), in the brand's existing cyan/violet,
+   reads as a true neon glow rather than the generic drop-shadows used
+   elsewhere.
+   - neon-cyan-hover / neon-text-cyan-hover: hover/focus-only glow, for
+     secondary interactive elements (search bars, icon buttons, links).
+   - neon-cyan-active / neon-violet-active: a persistent glow for things
+     that should stand out at rest (badges, wishlisted state, cart count).
+   - neon-text-cyan: persistent text glow (active nav link, prices).
+   - neon-cyan-active-hover / neon-text-cyan-active-hover: persistent glow
+     at rest that gets noticeably brighter on hover/focus - the "bold CTA"
+     combo used on primary buttons (Buy Now, hero Shop Now). */
+.neon-cyan-hover {
+  transition: box-shadow 0.25s ease;
+}
+.neon-cyan-hover:hover,
+.neon-cyan-hover:focus-visible {
+  box-shadow:
+    0 0 14px rgba(0, 217, 255, 0.7),
+    0 0 34px rgba(0, 217, 255, 0.4);
+}
+
+.neon-text-cyan-hover {
+  transition: text-shadow 0.25s ease;
+}
+.neon-text-cyan-hover:hover,
+.neon-text-cyan-hover:focus-visible {
+  text-shadow:
+    0 0 10px rgba(0, 217, 255, 0.7),
+    0 0 22px rgba(0, 217, 255, 0.4);
+}
+
+.neon-cyan-active {
+  box-shadow:
+    0 0 12px rgba(0, 217, 255, 0.65),
+    0 0 28px rgba(0, 217, 255, 0.35);
+}
+
+.neon-violet-active {
+  box-shadow:
+    0 0 12px rgba(139, 92, 246, 0.65),
+    0 0 28px rgba(139, 92, 246, 0.35);
+}
+
+.neon-text-cyan {
+  text-shadow:
+    0 0 10px rgba(0, 217, 255, 0.7),
+    0 0 22px rgba(0, 217, 255, 0.4);
+}
+
+/* Bold CTA combo: glows at rest, flares brighter on hover/focus. Used on
+   the shared primary Button variant and other key "do this now" buttons
+   (Buy Now, hero Shop Now) so they read as lit-up even before interaction. */
+.neon-cyan-active-hover {
+  transition: box-shadow 0.25s ease;
+  box-shadow:
+    0 0 12px rgba(0, 217, 255, 0.6),
+    0 0 26px rgba(0, 217, 255, 0.32);
+}
+.neon-cyan-active-hover:hover,
+.neon-cyan-active-hover:focus-visible {
+  box-shadow:
+    0 0 20px rgba(0, 217, 255, 0.85),
+    0 0 46px rgba(0, 217, 255, 0.5);
+}
+
+.neon-text-cyan-active-hover {
+  transition: text-shadow 0.25s ease;
+  text-shadow:
+    0 0 8px rgba(0, 217, 255, 0.55),
+    0 0 18px rgba(0, 217, 255, 0.3);
+}
+.neon-text-cyan-active-hover:hover,
+.neon-text-cyan-active-hover:focus-visible {
+  text-shadow:
+    0 0 14px rgba(0, 217, 255, 0.85),
+    0 0 30px rgba(0, 217, 255, 0.5);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

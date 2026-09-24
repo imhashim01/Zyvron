@@ -10,7 +10,8 @@ import { useCart } from "@/store/cartContext";
 import { FREE_SHIPPING_THRESHOLD } from "@/data/constants";
 
 const NAV_LINKS = [
-  { href: "/category/all", label: "All Catalog", match: (p) => p === "/" || p === "/category/all" },
+  { href: "/", label: "Home", match: (p) => p === "/" },
+  { href: "/category/all", label: "All Catalog" },
   { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
   { href: "/category/smart-wearables", label: "Smart Wearables" },
   { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
@@ -74,7 +75,7 @@ function MobileSidebar({ open, onClose, pathname }) {
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+            className="neon-cyan-hover flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
@@ -93,7 +94,7 @@ function MobileSidebar({ open, onClose, pathname }) {
                   link.accent
                     ? "text-amber-400 hover:bg-amber-400/10"
                     : isActive
-                    ? "bg-cyan-400/10 text-cyan-300"
+                    ? "neon-text-cyan bg-cyan-400/10 text-cyan-300"
                     : "text-white/80 hover:bg-white/5 hover:text-white"
                 }`}
               >
@@ -151,7 +152,7 @@ export default function Header({ productCount }) {
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           aria-expanded={menuOpen}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white md:hidden"
+          className="neon-cyan-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white md:hidden"
         >
           <HamburgerIcon />
         </button>
@@ -173,7 +174,7 @@ export default function Header({ productCount }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+              className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
             />
           </div>
         </form>
@@ -182,30 +183,30 @@ export default function Header({ productCount }) {
           {user ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
-                <Link href="/admin" className="hidden hover:text-cyan-300 sm:block">
+                <Link href="/admin" className="neon-text-cyan-hover hidden hover:text-cyan-300 sm:block">
                   Admin
                 </Link>
               )}
-              <Link href="/account" className="hover:text-cyan-300">
+              <Link href="/account" className="neon-text-cyan-hover hover:text-cyan-300">
                 {user.name?.split(" ")[0] || "Account"}
               </Link>
               <button
                 type="button"
                 onClick={() => logout().then(() => router.push("/"))}
-                className="hover:text-cyan-300"
+                className="neon-text-cyan-hover hover:text-cyan-300"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <Link href="/login" className="hover:text-cyan-300">
+            <Link href="/login" className="neon-text-cyan-hover hover:text-cyan-300">
               Login
             </Link>
           )}
 
           <Link
             href="/cart"
-            className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
+            className="neon-cyan-active-hover relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
             aria-label="Cart"
           >
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -214,7 +215,7 @@ export default function Header({ productCount }) {
               <circle cx="17" cy="20" r="1.4" />
             </svg>
             {count > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400 text-[11px] font-bold text-black">
+              <span className="neon-cyan-active absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400 text-[11px] font-bold text-black">
                 {count}
               </span>
             )}
@@ -234,8 +235,8 @@ export default function Header({ productCount }) {
                   link.accent
                     ? "text-amber-400 hover:text-amber-300"
                     : isActive
-                    ? "border-b-2 border-cyan-400 text-white"
-                    : "hover:text-white"
+                    ? "neon-text-cyan border-b-2 border-cyan-400 text-white"
+                    : "neon-text-cyan-hover hover:text-white"
                 }`}
               >
                 {link.label}
@@ -255,7 +256,7 @@ export default function Header({ productCount }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
         </div>
       </form>

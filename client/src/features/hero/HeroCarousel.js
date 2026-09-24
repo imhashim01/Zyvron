@@ -141,15 +141,24 @@ export default function HeroCarousel({ slides }) {
                 <div className="mt-7 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                   <Link
                     href={`/product/${slide.slug}`}
-                    className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,217,255,0.4)] active:scale-95"
-                    style={{ background: "linear-gradient(90deg, #00e5ff, #a855f7)" }}
+                    className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 active:scale-95"
+                    style={{
+                      background: "linear-gradient(90deg, #00e5ff, #a855f7)",
+                      // Persistent neon glow (Session 14 bold pass) - layered
+                      // cyan+violet to match the button's own gradient, so
+                      // the site's main CTA reads as lit-up at rest, not just
+                      // on hover. Inline (not the shared .neon-* classes)
+                      // since this is the only two-color glow in the app.
+                      boxShadow:
+                        "0 0 18px rgba(0, 229, 255, 0.55), 0 0 38px rgba(168, 85, 247, 0.35)",
+                    }}
                   >
                     Shop Now →
                   </Link>
                   <button
                     type="button"
                     onClick={() => handleAddToCart(slide)}
-                    className="rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95"
+                    className="neon-cyan-hover rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95"
                   >
                     Add to Cart
                   </button>

@@ -25,7 +25,9 @@ export default function ProductCard({ product, ribbon = false }) {
         type="button"
         onClick={() => toggleWishlist(product._id)}
         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70"
+        className={`absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70 ${
+          isWishlisted ? "neon-cyan-active" : ""
+        }`}
       >
         <svg
           viewBox="0 0 24 24"
@@ -43,14 +45,15 @@ export default function ProductCard({ product, ribbon = false }) {
           className="absolute left-3 top-3 z-10 rounded-md px-2.5 py-1 text-[11px] font-black text-white shadow"
           style={{
             background: "linear-gradient(90deg, #ff21a0, #704cff)",
-            boxShadow: "0 5px 15px rgba(190,40,220,0.2)",
+            boxShadow:
+              "0 0 8px rgba(255,33,160,0.5), 0 0 20px rgba(112,76,255,0.3), 0 5px 15px rgba(190,40,220,0.2)",
           }}
         >
           {pct}% OFF
         </span>
       ) : (
         product.badge && (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
+          <span className="neon-cyan-active absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
             {product.badge}
           </span>
         )
@@ -81,7 +84,7 @@ export default function ProductCard({ product, ribbon = false }) {
         </Link>
         <StarRating rating={product.rating} count={product.reviewsCount} />
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-white">{formatPKR(product.price)}</span>
+          <span className="neon-text-cyan text-lg font-bold text-white">{formatPKR(product.price)}</span>
           {product.compareAtPrice > product.price && (
             <span className="text-xs text-white/40 line-through">
               {formatPKR(product.compareAtPrice)}
@@ -105,7 +108,7 @@ export default function ProductCard({ product, ribbon = false }) {
               onClick={() => addToCart(product, 1)}
               aria-label="Add to cart"
               title="Add to cart"
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-400/50 py-2 text-xs font-bold text-cyan-300 transition hover:bg-cyan-400/10 sm:flex-none sm:px-3"
+              className="neon-cyan-hover flex flex-1 items-center justify-center gap-1.5 rounded-full border border-cyan-400/50 py-2 text-xs font-bold text-cyan-300 transition hover:bg-cyan-400/10 sm:flex-none sm:px-3"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 8H6" />
@@ -117,7 +120,7 @@ export default function ProductCard({ product, ribbon = false }) {
             <button
               type="button"
               onClick={handleBuyNow}
-              className="flex-1 rounded-full bg-cyan-400 py-2 text-xs font-bold text-black transition duration-200 hover:scale-[1.03] hover:bg-cyan-300 hover:shadow-[0_8px_20px_rgba(0,217,255,0.35)] active:scale-95"
+              className="neon-cyan-active-hover flex-1 rounded-full bg-cyan-400 py-2 text-xs font-bold text-black transition duration-200 hover:scale-[1.03] hover:bg-cyan-300 active:scale-95"
             >
               Buy Now
             </button>

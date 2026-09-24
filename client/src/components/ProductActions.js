@@ -66,7 +66,9 @@ export default function ProductActions({ product }) {
 
         <button
           onClick={() => toggleWishlist(product._id)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 hover:border-cyan-400"
+          className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/15 hover:border-cyan-400 ${
+            isWishlisted ? "neon-cyan-active" : "neon-cyan-hover"
+          }`}
           aria-label="Toggle wishlist"
         >
           <svg
@@ -85,14 +87,14 @@ export default function ProductActions({ product }) {
         <button
           disabled={outOfStock}
           onClick={handleAddToCart}
-          className="flex-1 rounded-full border border-cyan-400 py-3 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40"
+          className="neon-cyan-hover flex-1 rounded-full border border-cyan-400 py-3 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
           {added ? "Added ✓" : outOfStock ? "Out of Stock" : "Add to Cart"}
         </button>
         <button
           disabled={outOfStock}
           onClick={handleBuyNow}
-          className="flex-1 rounded-full bg-cyan-400 py-3 text-sm font-bold text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
+          className="neon-cyan-active-hover flex-1 rounded-full bg-cyan-400 py-3 text-sm font-bold text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
           Buy Now
         </button>
