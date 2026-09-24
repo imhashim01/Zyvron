@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { apiJson, getApiBase, getAccessToken } from "@/lib/api";
 import { formatPKR, STATUS_LABELS } from "@/lib/format";
+import { printOrderReceipt } from "@/lib/receipt";
+import OrderDetailModal from "@/components/admin/OrderDetailModal";
 
 const FILTERS = ["all", "pending", "accepted", "dispatched", "rejected", "delivered"];
 const ACTIONS = {
@@ -18,6 +20,7 @@ export default function AdminOrdersPage() {
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [viewOrder, setViewOrder] = useState(null);
 
   async function load(status) {
     setLoading(true);
@@ -121,7 +124,19 @@ export default function AdminOrdersPage() {
                 {o.customer?.name} · {o.customer?.phone} · {o.customer?.city}
               </p>
               <p className="text-xs text-white/40">{o.customer?.address}</p>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  onClick={() => setViewOrder(o)}
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 hover:bg-white/20"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => printOrderReceipt(o)}
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 hover:bg-white/20"
+                >
+                  Print
+                </button>
                 {(ACTIONS[o.status] || []).map(([status, label]) => (
                   <button
                     key={status}
@@ -142,6 +157,8 @@ export default function AdminOrdersPage() {
           ))}
         </div>
       )}
+
+      <OrderDetailModal order={viewOrder} onClose={() => setViewOrder(null)} />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Review = require("../models/Review");
+const User = require("../models/User");
 
 function slugifyTitle(title) {
   return String(title)
@@ -124,9 +126,25 @@ async function update(req, res, next) {
 
 async function remove(req, res, next) {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
+    // A real delete, not a soft-deactivate: this used to just flip
+    // isActive to false, which left the document sitting in MongoDB
+    // forever with no admin UI to see or manage it (every product listing,
+    // admin included, always filters isActive:true) - that's exactly the
+    // "I deleted it but it's still in MongoDB" mismatch Mohammad hit.
+    const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res.status(200).json({ message: "Product deactivated" });
+
+    // Clean up everything that pointed at it, so nothing is left dangling:
+    // reviews have no product left to belong to, and a stale cart/wishlist
+    // entry would otherwise sit in a customer's account indefinitely (every
+    // read already filters it out via an isActive/existence check, but
+    // there's no reason to leave the dead reference behind).
+    await Promise.all([
+      Review.deleteMany({ product: product._id }),
+      User.updateMany({}, { $pull: { cart: { product: product._id }, wishlist: product._id } }),
+    ]);
+
+    res.status(200).json({ message: "Product permanently deleted" });
   } catch (err) {
     next(err);
   }

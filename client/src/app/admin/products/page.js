@@ -98,7 +98,7 @@ export default function AdminProductsPage() {
   }
 
   async function onDelete(id) {
-    if (!confirm("Delete this product?")) return;
+    if (!confirm("Permanently delete this product? This removes it from the database and cannot be undone.")) return;
     try {
       await apiJson(`/products/${id}`, { method: "DELETE" });
       load();
