@@ -98,6 +98,9 @@ export default function AdminBrandsPage() {
               onChange={(e) => setForm((f) => ({ ...f, logo: e.target.value }))}
               className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
             />
+            <p className="mt-1 px-1 text-xs text-white/35">
+              Paste a link to an already-hosted image (e.g. https://example.com/logo.png) - not an uploaded file or copied image data.
+            </p>
           </div>
           <input
             type="number"
