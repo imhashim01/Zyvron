@@ -7,7 +7,9 @@ import WishlistGrid from "@/components/WishlistGrid";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL } from "@/data/constants";
 
-export const revalidate = 3600;
+// See lib/api.js's serverFetch comment - lowered from 3600s so admin-panel
+// product changes show up on the storefront within about a minute.
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;

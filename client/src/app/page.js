@@ -9,7 +9,10 @@ import ProductCard from "@/components/ProductCard";
 import Reveal from "@/animations/Reveal";
 import StickyShopBar from "@/components/StickyShopBar";
 
-export const revalidate = 3600;
+// Matches lib/api.js's serverFetch default - see the comment there for why
+// this was lowered from 3600s (was causing the homepage to keep showing
+// stale/deleted products for up to an hour after an admin-panel change).
+export const revalidate = 60;
 
 async function getCategories() {
   const data = await serverFetch("/categories");

@@ -10,7 +10,9 @@ import StarRating from "@/components/StarRating";
 import JsonLd from "@/components/JsonLd";
 import Slider from "@/components/Slider";
 
-export const revalidate = 3600;
+// See lib/api.js's serverFetch comment - lowered from 3600s so admin-panel
+// product changes show up on the storefront within about a minute.
+export const revalidate = 60;
 
 async function getProduct(slug) {
   const data = await serverFetch(`/products/${slug}`);
@@ -42,6 +44,18 @@ export default async function ProductPage({ params }) {
     `/products?category=${encodeURIComponent(product.category?.slug || "")}&limit=5`
   );
   const related = (relatedData?.products || []).filter((p) => p._id !== product._id).slice(0, 4);
+
+  // The admin "Add Product" form only ever fills in the single required
+  // `image` field, never the optional `images` array (that's not exposed in
+  // the form at all - see Session 12's audit note). ProductGallery was being
+  // handed `product.images` alone, so for every admin-created product that
+  // array is empty and the gallery fell back to its generic placeholder
+  // (the Zyvron OG/logo image) - the actual uploaded product photo was never
+  // shown at all. Lead with the real `image` field, then append any extra
+  // gallery shots, deduping in case `images` happens to repeat it.
+  const galleryImages = [product.image, ...(product.images || [])].filter(
+    (src, i, arr) => Boolean(src) && arr.indexOf(src) === i
+  );
 
   const pct = discountPercent(product.price, product.compareAtPrice);
 
@@ -92,7 +106,7 @@ export default async function ProductPage({ params }) {
       <JsonLd data={breadcrumbJsonLd} />
 
       <div className="grid gap-10 md:grid-cols-2">
-        <ProductGallery images={product.images} title={product.title} />
+        <ProductGallery images={galleryImages} title={product.title} />
 
         <div>
           <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-cyan-300">

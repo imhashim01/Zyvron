@@ -75,7 +75,13 @@ export async function apiJson(path, options = {}) {
 
 // Server Component / generateMetadata / sitemap fetch — never throws, so a
 // backend outage degrades pages gracefully instead of failing the build.
-export async function serverFetch(path, { revalidate = 3600 } = {}) {
+// revalidate default was 3600s (1hr) - too long while the catalog is being
+// actively edited in the admin panel: an add/delete there wouldn't show up
+// on the storefront for up to an hour, which is exactly the "admin panel
+// has 1 product, homepage still shows many" bug Mohammad hit. 60s keeps
+// real caching benefit under normal traffic while making admin edits show
+// up within a minute instead of possibly an hour.
+export async function serverFetch(path, { revalidate = 60 } = {}) {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       next: { revalidate },
