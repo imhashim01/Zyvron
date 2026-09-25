@@ -73,6 +73,47 @@ export async function apiJson(path, options = {}) {
   return data;
 }
 
+// Uploads one or more files as multipart/form-data (e.g. product photos from
+// the admin panel's drag-and-drop picker) and returns the parsed JSON
+// response. Deliberately separate from apiFetch/rawFetch above rather than
+// reusing them: those always set Content-Type: application/json, and
+// overriding that for a FormData body would strip the multipart boundary
+// the browser generates, which breaks the upload entirely - Content-Type
+// for a file upload must be left for fetch to set on its own.
+export async function apiUpload(path, formData) {
+  async function send() {
+    const headers = {};
+    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+    return fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers,
+      body: formData,
+      credentials: "include",
+    });
+  }
+
+  let res = await send();
+  if (res.status === 401) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) res = await send();
+  }
+
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    // no JSON body
+  }
+  if (!res.ok) {
+    const message = data?.message || `Upload failed (${res.status})`;
+    const err = new Error(message);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
 // Server Component / generateMetadata / sitemap fetch — never throws, so a
 // backend outage degrades pages gracefully instead of failing the build.
 // revalidate default was 3600s (1hr) - too long while the catalog is being

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { apiJson } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import { apiJson, apiUpload } from "@/lib/api";
 import { formatPKR } from "@/lib/format";
 
 const EMPTY_FORM = {
@@ -10,7 +10,7 @@ const EMPTY_FORM = {
   brand: "",
   price: "",
   compareAtPrice: "",
-  image: "",
+  photos: [],
   badge: "",
   description: "",
   stock: "10",
@@ -27,6 +27,10 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const fileInputRef = useRef(null);
 
   async function load() {
     setLoading(true);
@@ -53,17 +57,24 @@ export default function AdminProductsPage() {
   function startAdd() {
     setForm({ ...EMPTY_FORM, category: categories[0]?._id || "" });
     setEditingId(null);
+    setUrlInput("");
     setShowForm(true);
   }
 
   function startEdit(p) {
+    // The cover (`image`) and the rest of the gallery (`images`) are two
+    // separate fields on the Product document (see Product.js / the PDP's
+    // galleryImages logic) - the admin form flattens them into one ordered
+    // "photos" array with the cover always first, so editing/reordering is
+    // one simple list instead of two disconnected fields.
+    const photos = [p.image, ...(p.images || [])].filter(Boolean);
     setForm({
       title: p.title,
       category: p.category?._id || p.category,
       brand: p.brand?._id || p.brand || "",
       price: p.price,
       compareAtPrice: p.compareAtPrice || "",
-      image: p.image || "",
+      photos,
       badge: p.badge || "",
       description: p.description || "",
       stock: p.stock ?? 0,
@@ -71,14 +82,59 @@ export default function AdminProductsPage() {
       isFeatured: !!p.isFeatured,
     });
     setEditingId(p._id);
+    setUrlInput("");
     setShowForm(true);
+  }
+
+  async function handleFiles(fileList) {
+    const files = Array.from(fileList || []).filter((f) => f.type.startsWith("image/"));
+    if (!files.length) return;
+    setUploading(true);
+    setError("");
+    try {
+      const body = new FormData();
+      files.forEach((f) => body.append("files", f));
+      const data = await apiUpload("/uploads/images?folder=products", body);
+      const urls = data?.urls || [];
+      setForm((f) => ({ ...f, photos: [...f.photos, ...urls] }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function addPhotoUrl() {
+    const url = urlInput.trim();
+    if (!url) return;
+    setForm((f) => ({ ...f, photos: [...f.photos, url] }));
+    setUrlInput("");
+  }
+
+  function removePhoto(index) {
+    setForm((f) => ({ ...f, photos: f.photos.filter((_, i) => i !== index) }));
+  }
+
+  function makeCoverPhoto(index) {
+    setForm((f) => {
+      const photos = [...f.photos];
+      const [chosen] = photos.splice(index, 1);
+      return { ...f, photos: [chosen, ...photos] };
+    });
   }
 
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
+    if (!form.photos.length) {
+      setError("Add at least one product photo before saving.");
+      return;
+    }
+    const { photos, ...rest } = form;
     const payload = {
-      ...form,
+      ...rest,
+      image: photos[0],
+      images: photos.slice(1),
       brand: form.brand || undefined,
       price: Number(form.price),
       compareAtPrice: form.compareAtPrice ? Number(form.compareAtPrice) : undefined,
@@ -176,17 +232,111 @@ export default function AdminProductsPage() {
             onChange={(e) => setForm((f) => ({ ...f, compareAtPrice: e.target.value }))}
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
+
           <div className="sm:col-span-2">
-            <input
-              placeholder="Image URL - paste any link (Google Images, etc.), it's auto-hosted on save"
-              value={form.image}
-              onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-              className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
-            />
-            <p className="mt-1 px-1 text-xs text-white/35">
-              Any image URL works - it's automatically copied to our own image hosting when you save, so the link keeps working even if the original source removes it.
-            </p>
+            <label className="mb-1.5 block text-xs font-semibold text-white/70">
+              Product Photos {form.photos.length > 0 ? `(${form.photos.length})` : ""}
+            </label>
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragActive(true);
+              }}
+              onDragLeave={() => setDragActive(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragActive(false);
+                handleFiles(e.dataTransfer.files);
+              }}
+              className={`cursor-pointer rounded-xl border border-dashed p-5 text-center text-sm transition ${
+                dragActive ? "border-cyan-400 bg-cyan-400/5" : "border-white/15 bg-white/[0.02] hover:border-white/30"
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  handleFiles(e.target.files);
+                  e.target.value = "";
+                }}
+              />
+              {uploading ? (
+                <p className="text-white/60">Uploading…</p>
+              ) : (
+                <p className="text-white/50">
+                  Drag &amp; drop photos here, or <span className="text-cyan-300">click to browse</span>
+                  <br />
+                  <span className="text-xs text-white/30">
+                    First photo is the cover image. JPEG/PNG/WEBP, up to 8MB each.
+                  </span>
+                </p>
+              )}
+            </div>
+
+            <div className="mt-2 flex gap-2">
+              <input
+                placeholder="...or paste an image URL"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addPhotoUrl();
+                  }
+                }}
+                className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white placeholder:text-white/40 focus:border-cyan-400"
+              />
+              <button
+                type="button"
+                onClick={addPhotoUrl}
+                className="rounded-full border border-white/20 px-4 py-2 text-xs text-white hover:border-cyan-300"
+              >
+                Add
+              </button>
+            </div>
+
+            {form.photos.length > 0 && (
+              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
+                {form.photos.map((src, i) => (
+                  <div
+                    key={src + i}
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-white/10 bg-white/5"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
+                    {i === 0 && (
+                      <span className="absolute left-1 top-1 rounded bg-cyan-400 px-1.5 py-0.5 text-[10px] font-bold text-black">
+                        Cover
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(i)}
+                      aria-label="Remove photo"
+                      className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-xs text-white opacity-0 transition group-hover:opacity-100"
+                    >
+                      ×
+                    </button>
+                    {i !== 0 && (
+                      <button
+                        type="button"
+                        onClick={() => makeCoverPhoto(i)}
+                        className="absolute inset-x-0 bottom-0 bg-black/70 py-0.5 text-[10px] font-semibold text-white opacity-0 transition group-hover:opacity-100"
+                      >
+                        Make cover
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
           <input
             placeholder="Badge (e.g. Hot Deal)"
             value={form.badge}
@@ -225,7 +375,11 @@ export default function AdminProductsPage() {
             Featured (Homepage Hero)
           </label>
           <div className="flex gap-3 sm:col-span-2">
-            <button type="submit" className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300">
+            <button
+              type="submit"
+              disabled={uploading}
+              className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300 disabled:opacity-50"
+            >
               {editingId ? "Save Changes" : "Create Product"}
             </button>
             <button type="button" onClick={() => setShowForm(false)} className="rounded-full border border-white/20 px-5 py-2 text-sm text-white hover:border-cyan-300">
@@ -242,6 +396,7 @@ export default function AdminProductsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-white/5 text-white/60">
               <tr>
+                <th className="p-3"></th>
                 <th className="p-3">Title</th>
                 <th className="p-3">Category</th>
                 <th className="p-3">Brand</th>
@@ -253,6 +408,14 @@ export default function AdminProductsPage() {
             <tbody>
               {products.map((p) => (
                 <tr key={p._id} className="border-t border-white/10 text-white/80">
+                  <td className="p-3">
+                    {p.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-lg bg-white/5" />
+                    )}
+                  </td>
                   <td className="p-3">{p.title}</td>
                   <td className="p-3">{p.category?.name || "-"}</td>
                   <td className="p-3">{p.brand?.name || "-"}</td>
