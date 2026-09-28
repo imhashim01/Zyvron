@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiJson } from "@/lib/api";
 
-const EMPTY_FORM = { name: "", icon: "", order: "0" };
+const EMPTY_FORM = { name: "", icon: "", image: "", order: "0" };
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -36,7 +36,7 @@ export default function AdminCategoriesPage() {
   }
 
   function startEdit(c) {
-    setForm({ name: c.name, icon: c.icon || "", order: String(c.order ?? 0) });
+    setForm({ name: c.name, icon: c.icon || "", image: c.image || "", order: String(c.order ?? 0) });
     setEditingId(c._id);
     setShowForm(true);
   }
@@ -44,7 +44,7 @@ export default function AdminCategoriesPage() {
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    const payload = { name: form.name, icon: form.icon, order: Number(form.order) || 0 };
+    const payload = { name: form.name, icon: form.icon, image: form.image, order: Number(form.order) || 0 };
     try {
       if (editingId) {
         await apiJson(`/categories/${editingId}`, { method: "PUT", body: JSON.stringify(payload) });
@@ -92,7 +92,7 @@ export default function AdminCategoriesPage() {
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
           <input
-            placeholder="Icon (e.g. headphones, watch, gamepad, phone)"
+            placeholder="Icon keyword (e.g. headphones, watch, gamepad, phone) - optional"
             value={form.icon}
             onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
@@ -104,6 +104,22 @@ export default function AdminCategoriesPage() {
             onChange={(e) => setForm((f) => ({ ...f, order: e.target.value }))}
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
           />
+          <div className="flex items-center gap-3 sm:col-span-2">
+            <input
+              placeholder="Image URL - shown as this category's photo on the homepage"
+              value={form.image}
+              onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
+              className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            />
+            {form.image && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={form.image}
+                alt=""
+                className="h-10 w-10 shrink-0 rounded-lg border border-white/10 object-cover"
+              />
+            )}
+          </div>
           <div className="flex gap-3 sm:col-span-2">
             <button type="submit" className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300">
               {editingId ? "Save Changes" : "Create Category"}
@@ -128,6 +144,7 @@ export default function AdminCategoriesPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-white/5 text-white/60">
               <tr>
+                <th className="p-3">Photo</th>
                 <th className="p-3">Name</th>
                 <th className="p-3">Slug</th>
                 <th className="p-3">Icon</th>
@@ -138,6 +155,14 @@ export default function AdminCategoriesPage() {
             <tbody>
               {categories.map((c) => (
                 <tr key={c._id} className="border-t border-white/10 text-white/80">
+                  <td className="p-3">
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={c.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                    ) : (
+                      <span className="text-white/30">-</span>
+                    )}
+                  </td>
                   <td className="p-3">{c.name}</td>
                   <td className="p-3 text-white/50">{c.slug}</td>
                   <td className="p-3">{c.icon || "-"}</td>

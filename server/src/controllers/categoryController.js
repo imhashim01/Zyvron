@@ -20,9 +20,9 @@ async function list(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const { name, icon, order } = req.body;
+    const { name, icon, image, order } = req.body;
     if (!name) return res.status(400).json({ message: "name is required" });
-    const category = await Category.create({ name, slug: slugify(name), icon, order });
+    const category = await Category.create({ name, slug: slugify(name), icon, image, order });
     res.status(201).json(category);
   } catch (err) {
     next(err);
@@ -31,8 +31,8 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { name, icon, order } = req.body;
-    const patch = { icon, order };
+    const { name, icon, image, order } = req.body;
+    const patch = { icon, image, order };
     if (name) {
       patch.name = name;
       patch.slug = slugify(name);
