@@ -7,7 +7,7 @@ import { useCart } from "@/store/cartContext";
 import { discountPercent, formatPKR } from "@/lib/format";
 import StarRating from "./StarRating";
 
-export default function ProductCard({ product, ribbon = false }) {
+export default function ProductCard({ product, ribbon = false, cornerBadge = null }) {
   const { addToCart, startBuyNow, wishlist, toggleWishlist } = useCart();
   const router = useRouter();
   const pct = discountPercent(product.price, product.compareAtPrice);
@@ -51,10 +51,17 @@ export default function ProductCard({ product, ribbon = false }) {
         >
           {pct}% OFF
         </span>
+      ) : product.badge ? (
+        <span className="neon-cyan-active absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
+          {product.badge}
+        </span>
       ) : (
-        product.badge && (
-          <span className="neon-cyan-active absolute left-3 top-3 z-10 rounded-full bg-cyan-400 px-2.5 py-1 text-[11px] font-bold text-black">
-            {product.badge}
+        // Section-supplied badge (e.g. "NEW" on New Arrivals) - only shown
+        // when there's no real discount ribbon or admin-set badge already
+        // occupying this corner, so a product never carries two labels.
+        cornerBadge && (
+          <span className="absolute left-3 top-3 z-10 rounded-full border border-cyan-400/50 bg-black/60 px-2.5 py-1 text-[11px] font-bold text-cyan-300 backdrop-blur">
+            {cornerBadge}
           </span>
         )
       )}
@@ -67,7 +74,7 @@ export default function ProductCard({ product, ribbon = false }) {
               alt={product.title}
               fill
               sizes="(max-width: 640px) 50vw, 25vw"
-              className="object-cover transition duration-300 group-hover:scale-105"
+              className="object-cover transition duration-300 group-hover:scale-[1.03]"
             />
           ) : null}
         </div>
@@ -82,6 +89,9 @@ export default function ProductCard({ product, ribbon = false }) {
             {product.title}
           </h3>
         </Link>
+        {product.features?.[0] && (
+          <p className="line-clamp-1 text-xs text-[var(--text-muted)]">{product.features[0]}</p>
+        )}
         <StarRating rating={product.rating} count={product.reviewsCount} />
         <div className="mt-1 flex items-baseline gap-2">
           <span className="neon-text-cyan text-lg font-bold text-white">{formatPKR(product.price)}</span>

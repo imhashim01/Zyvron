@@ -29,9 +29,9 @@ export default function FlashDeals({ products }) {
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="font-heading text-xl font-bold text-white">
-            Flash Deals &amp; <span className="text-cyan-400">Top Discounts</span>
+            ⚡ Flash <span className="text-cyan-400">Deals</span>
           </h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">Limited Stock • Up to 50% Off</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Limited-time prices on selected tech.</p>
           <div className="mt-3">
             <FlashCountdown endsAt={endsAt} />
           </div>

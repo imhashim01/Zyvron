@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Logo from "./ui/Logo";
-import Testimonials from "./Testimonials";
 import NewsletterForm from "./NewsletterForm";
 import { WHATSAPP_NUMBER, SUPPORT_EMAIL } from "@/data/constants";
 
@@ -27,9 +26,11 @@ const WHATSAPP_DISPLAY = `0${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slic
 export default function Footer() {
   return (
     <footer className="mt-16 bg-[var(--surface-header)] pb-6 pt-10">
-      <Testimonials />
-
-      <div className="mx-auto mt-10 grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:px-6 md:grid-cols-4">
+      {/* The honest trust/brand panel (formerly fake customer testimonials)
+          now lives on the homepage itself, in its proper "Real Customer
+          Reviews" position - see Testimonials.js and app/page.js - rather
+          than repeating on every single page's footer. */}
+      <div className="mx-auto grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:px-6 md:grid-cols-4">
         <div>
           <Logo size="md" href={null} />
           <p className="mt-3 text-sm text-[var(--text-secondary)]">

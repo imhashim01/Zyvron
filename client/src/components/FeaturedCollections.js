@@ -34,20 +34,31 @@ function CollectionCard({ href, image, name, tagline, count }) {
         <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
           {tagline || `${count} Item${count === 1 ? "" : "s"}`}
         </p>
+        <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-300 opacity-0 transition duration-300 group-hover:opacity-100">
+          Explore →
+        </span>
       </div>
     </Link>
   );
 }
 
+// Only categories that actually have active products are shown - never a
+// prominently-displayed empty category. `counts` is the real per-category
+// tally computed from the live product list in page.js.
 export default function FeaturedCollections({ categories, totalCount = 0, counts = {} }) {
+  const withStock = categories.filter((cat) => (counts[cat.slug] ?? 0) > 0);
+  if (withStock.length === 0) return null;
+
   return (
     <Reveal as="section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div className="mb-5 flex items-end justify-between">
+      <div id="explore-zyvron" className="mb-5 flex scroll-mt-24 items-end justify-between">
         <div>
           <h2 className="font-heading text-xl font-black uppercase tracking-tight text-white sm:text-2xl">
-            Featured <span className="text-cyan-400">Collections</span>
+            Explore <span className="text-cyan-400">Zyvron</span>
           </h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">Shop by curated lifestyle categories</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Everything you need to upgrade your everyday tech.
+          </p>
         </div>
         <Link href="/category/all" className="shrink-0 text-sm text-cyan-300 hover:underline">
           View All ({totalCount}) →
@@ -55,7 +66,7 @@ export default function FeaturedCollections({ categories, totalCount = 0, counts
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {categories.map((cat, i) => {
+        {withStock.map((cat, i) => {
           const meta = CATEGORY_META[cat.slug];
           return (
             <div key={cat.slug} className="stagger-item" style={{ "--stagger-delay": `${i * 80}ms` }}>

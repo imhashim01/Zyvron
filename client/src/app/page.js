@@ -1,12 +1,17 @@
-import Link from "next/link";
 import { serverFetch } from "@/lib/api";
 import { FALLBACK_CATEGORIES } from "@/data/constants";
 import HeroCarousel from "@/features/hero/HeroCarousel";
 import TrustBar from "@/components/TrustBar";
 import FeaturedCollections from "@/components/FeaturedCollections";
+import BestSellers from "@/components/BestSellers";
+import NewArrivals from "@/components/NewArrivals";
 import FlashDeals from "@/components/FlashDeals";
-import ProductCard from "@/components/ProductCard";
-import Reveal from "@/animations/Reveal";
+import ShopByNeed from "@/components/ShopByNeed";
+import FeaturedSpotlight from "@/components/FeaturedSpotlight";
+import WhyZyvron from "@/components/WhyZyvron";
+import LifestyleBlocks from "@/components/LifestyleBlocks";
+import Testimonials from "@/components/Testimonials";
+import NewsletterWhatsAppCTA from "@/components/NewsletterWhatsAppCTA";
 import StickyShopBar from "@/components/StickyShopBar";
 
 // Matches lib/api.js's serverFetch default - see the comment there for why
@@ -25,18 +30,33 @@ async function getProducts(params) {
   return data?.products || [];
 }
 
+// A product is only promoted (hero, Best Sellers, New Arrivals, Flash
+// Deals, Featured Spotlight, Lifestyle Blocks) while it's actually in
+// stock. ProductCard's own disabled "Out of stock" button state is
+// untouched everywhere else in the app (category pages, search, etc.) -
+// this only decides what the homepage actively pushes.
+function inStock(product) {
+  return (product.stock ?? 1) > 0;
+}
+
 export default async function HomePage() {
   const categories = await getCategories();
+
   // Catalog is small (see productController's own "catalog is small" note),
-  // so one unpaginated fetch + client-side tally is both simpler and far
-  // less load than a separate count request per category.
-  const [flashSale, popular, allActive, featured, topRated] = await Promise.all([
-    getProducts({ flashSale: "true", limit: "8" }),
-    getProducts({ sort: "popular", limit: "8" }),
+  // so one unpaginated fetch + client-side tally/ranking is both simpler and
+  // far less load than a separate request per section.
+  const [flashSale, bestSellers, newArrivals, allActive, featuredList] = await Promise.all([
+    getProducts({ flashSale: "true", limit: "10" }),
+    getProducts({ sort: "popular", limit: "10" }),
+    // "newest" isn't a recognized sort key in productController's SORTERS
+    // map, so it legitimately falls through to the controller's own real
+    // default sort (createdAt: -1) - genuine "just added" order, no
+    // invented "new" dates.
+    getProducts({ sort: "newest", limit: "10" }),
     getProducts({ limit: "100" }),
-    getProducts({ featured: "true", limit: "6" }),
-    getProducts({ sort: "rating", limit: "4" }),
+    getProducts({ featured: "true", limit: "1" }),
   ]);
+
   const totalCount = allActive.length;
   const counts = {};
   for (const p of allActive) {
@@ -44,13 +64,32 @@ export default async function HomePage() {
     if (slug) counts[slug] = (counts[slug] || 0) + 1;
   }
 
-  // No isFeatured products yet (a fresh catalog before anyone's flagged one)?
-  // Fall back to real flash-sale items, then the top sellers - always real
-  // products, never an invented placeholder.
-  const heroSlides = (featured.length ? featured : flashSale.length ? flashSale : popular).slice(
-    0,
-    6
-  );
+  const flashSaleInStock = flashSale.filter(inStock);
+  const bestSellersInStock = bestSellers.filter(inStock);
+  const newArrivalsInStock = newArrivals.filter(inStock);
+  const featuredProduct = featuredList.filter(inStock)[0] || null;
+  const inStockActive = allActive.filter(inStock);
+
+  // Best real product per category (rating, then reviewsCount, as
+  // tie-breakers) - reused for both the hero, so it's never dominated by a
+  // single product/category the way a sparse isFeatured flag alone could
+  // leave it, and for the lifestyle blocks below.
+  const topProductByCategory = {};
+  for (const p of inStockActive) {
+    const slug = p.category?.slug;
+    if (!slug) continue;
+    const current = topProductByCategory[slug];
+    if (
+      !current ||
+      (p.rating || 0) > (current.rating || 0) ||
+      ((p.rating || 0) === (current.rating || 0) && (p.reviewsCount || 0) > (current.reviewsCount || 0))
+    ) {
+      topProductByCategory[slug] = p;
+    }
+  }
+  const diversifiedHero = categories.map((cat) => topProductByCategory[cat.slug]).filter(Boolean);
+  const heroFallback = flashSaleInStock.length ? flashSaleInStock : bestSellersInStock;
+  const heroSlides = (diversifiedHero.length ? diversifiedHero : heroFallback).slice(0, 6);
 
   return (
     <div className="pt-4">
@@ -64,52 +103,23 @@ export default async function HomePage() {
 
       <FeaturedCollections categories={categories} totalCount={totalCount} counts={counts} />
 
-      {topRated.length > 0 && (
-        <Reveal as="section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="font-heading text-xl font-bold text-white">
-                Loved by <span className="text-cyan-400">Customers</span>
-              </h2>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">Our highest-rated products, real reviews</p>
-            </div>
-            <Link href="/category/all?sort=rating" className="text-sm text-cyan-300 hover:underline">
-              View all →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {topRated.map((p, i) => (
-              <div key={p._id} className="stagger-item" style={{ "--stagger-delay": `${i * 60}ms` }}>
-                <ProductCard product={p} />
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      )}
+      <BestSellers products={bestSellersInStock} />
 
-      <FlashDeals products={flashSale} />
+      <NewArrivals products={newArrivalsInStock} />
 
-      <Reveal as="section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-heading text-xl font-bold text-white">Popular Right Now</h2>
-          <Link href="/category/all" className="text-sm text-cyan-300 hover:underline">
-            View all →
-          </Link>
-        </div>
-        {popular.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {popular.map((p, i) => (
-              <div key={p._id} className="stagger-item" style={{ "--stagger-delay": `${i * 60}ms` }}>
-                <ProductCard product={p} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-[var(--text-secondary)]">
-            Products will appear here once the catalog is loaded.
-          </p>
-        )}
-      </Reveal>
+      <FlashDeals products={flashSaleInStock} />
+
+      <ShopByNeed categories={categories} counts={counts} />
+
+      <FeaturedSpotlight product={featuredProduct} />
+
+      <WhyZyvron />
+
+      <LifestyleBlocks categories={categories} counts={counts} topProductByCategory={topProductByCategory} />
+
+      <Testimonials />
+
+      <NewsletterWhatsAppCTA />
 
       <StickyShopBar />
     </div>

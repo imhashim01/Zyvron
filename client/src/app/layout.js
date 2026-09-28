@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "../styles/globals.css";
 import Providers from "@/components/Providers";
+import AnnouncementBar from "@/components/AnnouncementBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -75,6 +76,7 @@ export default async function RootLayout({ children }) {
         <JsonLd data={orgJsonLd} />
         <JsonLd data={siteJsonLd} />
         <Providers>
+          <AnnouncementBar />
           <Header productCount={productCount} />
           <main className="flex-1">{children}</main>
           <Footer />

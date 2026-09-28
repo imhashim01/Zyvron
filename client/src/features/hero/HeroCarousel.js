@@ -106,69 +106,100 @@ export default function HeroCarousel({ slides }) {
 
       <div className="relative grid gap-6 px-6 pb-8 pt-10 sm:gap-8 sm:px-10 sm:pt-14 lg:grid-cols-2 lg:items-center lg:gap-8 lg:pt-16">
         <div className="text-center lg:text-left">
-          {/* Every slide's real copy is always in the DOM (server-rendered,
-              crawlable) - only the active one is displayed. */}
-          {slides.map((slide, i) => {
-            const pct = discountPercent(slide.price, slide.compareAtPrice);
-            return (
-              <div key={slide._id} className={i === activeIndex ? "block" : "hidden"}>
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
-                  style={{ background: "linear-gradient(90deg, #00c6ff, #a855f7)" }}
+          {/* Constant brand header - the H1 is Zyvron's own headline, not a
+              single product's title, so the hero reads as a brand statement
+              rather than a rotating single-product ad. */}
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
+            style={{ background: "linear-gradient(90deg, #00c6ff, #a855f7)" }}
+          >
+            <span aria-hidden="true">⚡</span> NEXT-GEN TECH FOR EVERYDAY LIFE
+          </span>
+
+          <h1 className="mt-5 font-heading text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl">
+            Technology That Moves With You.
+          </h1>
+
+          <p className="mx-auto mt-4 max-w-md text-sm text-[var(--text-secondary)] sm:text-base lg:mx-0">
+            Discover premium audio, smart wearables, charging gear and everyday tech — delivered across
+            Pakistan.
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+            <Link
+              href="/category/all"
+              className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 active:scale-95"
+              style={{
+                background: "linear-gradient(90deg, #00e5ff, #a855f7)",
+                // Persistent neon glow (Session 14 bold pass) - layered
+                // cyan+violet to match the button's own gradient, so
+                // the site's main CTA reads as lit-up at rest, not just
+                // on hover. Inline (not the shared .neon-* classes)
+                // since this is the only two-color glow in the app.
+                boxShadow:
+                  "0 0 12px rgba(0, 229, 255, 0.4), 0 0 26px rgba(168, 85, 247, 0.26)",
+              }}
+            >
+              Shop Now
+            </Link>
+            <a
+              href="#explore-zyvron"
+              className="neon-cyan-hover rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95"
+            >
+              Explore Categories
+            </a>
+          </div>
+
+          {/* Real product spotlight - smaller, rotating supporting content
+              beneath the constant brand header. Every slide's real copy
+              stays in the DOM (server-rendered, crawlable); only the active
+              one is visible. */}
+          <div className="mt-8 border-t border-white/10 pt-6 lg:mt-10">
+            {slides.map((slide, i) => {
+              const pct = discountPercent(slide.price, slide.compareAtPrice);
+              return (
+                <div
+                  key={slide._id}
+                  className={
+                    i === activeIndex
+                      ? "flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start"
+                      : "hidden"
+                  }
                 >
-                  <span aria-hidden="true">⚡</span> {slide.badge || slide.category?.name || "Featured"}
-                </span>
-
-                <h1 className="mt-5 font-heading text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl">
-                  {slide.title}
-                </h1>
-
-                <p className="mx-auto mt-4 max-w-md text-sm text-[var(--text-secondary)] sm:text-base lg:mx-0">
-                  {slide.description}
-                </p>
-
-                <div className="mt-4 flex items-center justify-center gap-3 lg:justify-start">
-                  <StarRating rating={slide.rating} count={slide.reviewsCount} />
-                </div>
-
-                <div className="mt-3 flex items-center justify-center gap-3 lg:justify-start">
-                  <span className="text-2xl font-bold text-white">{formatPKR(slide.price)}</span>
-                  {slide.compareAtPrice > slide.price && (
-                    <span className="text-sm text-[var(--text-muted)] line-through">
-                      {formatPKR(slide.compareAtPrice)}
-                    </span>
-                  )}
-                  {pct && <span className="text-sm font-semibold text-emerald-400">{pct}% OFF</span>}
-                </div>
-
-                <div className="mt-7 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-                  <Link
-                    href={`/product/${slide.slug}`}
-                    className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 active:scale-95"
-                    style={{
-                      background: "linear-gradient(90deg, #00e5ff, #a855f7)",
-                      // Persistent neon glow (Session 14 bold pass) - layered
-                      // cyan+violet to match the button's own gradient, so
-                      // the site's main CTA reads as lit-up at rest, not just
-                      // on hover. Inline (not the shared .neon-* classes)
-                      // since this is the only two-color glow in the app.
-                      boxShadow:
-                        "0 0 12px rgba(0, 229, 255, 0.4), 0 0 26px rgba(168, 85, 247, 0.26)",
-                    }}
-                  >
-                    Shop Now →
-                  </Link>
+                  <div className="min-w-0 text-center sm:text-left">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-cyan-300">
+                      {slide.badge || slide.category?.name || "Featured"}
+                    </p>
+                    <Link
+                      href={`/product/${slide.slug}`}
+                      className="mt-1 block truncate text-sm font-semibold text-white hover:text-cyan-300 sm:text-base"
+                    >
+                      {slide.title}
+                    </Link>
+                    <div className="mt-1.5 flex items-center justify-center gap-3 sm:justify-start">
+                      <StarRating rating={slide.rating} count={slide.reviewsCount} />
+                    </div>
+                    <div className="mt-1.5 flex items-center justify-center gap-2 sm:justify-start">
+                      <span className="text-base font-bold text-white">{formatPKR(slide.price)}</span>
+                      {slide.compareAtPrice > slide.price && (
+                        <span className="text-xs text-[var(--text-muted)] line-through">
+                          {formatPKR(slide.compareAtPrice)}
+                        </span>
+                      )}
+                      {pct && <span className="text-xs font-semibold text-emerald-400">{pct}% OFF</span>}
+                    </div>
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleAddToCart(slide)}
-                    className="neon-cyan-hover rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95"
+                    className="neon-cyan-hover shrink-0 rounded-xl border border-cyan-400/50 px-4 py-2 text-xs font-bold text-cyan-300 transition hover:bg-cyan-400/10 active:scale-95"
                   >
                     Add to Cart
                   </button>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[220px] items-center justify-center py-2 sm:max-w-xs sm:py-3 md:max-w-sm md:py-4 lg:max-w-none lg:py-0">
