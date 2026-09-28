@@ -31,7 +31,7 @@ function CollectionCard({ href, image, name, tagline, count }) {
       />
       <div className="absolute inset-x-0 bottom-0 p-4">
         <h3 className="font-heading text-base font-bold text-white">{name}</h3>
-        <p className="mt-0.5 text-xs text-white/60">
+        <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
           {tagline || `${count} Item${count === 1 ? "" : "s"}`}
         </p>
       </div>
@@ -47,7 +47,7 @@ export default function FeaturedCollections({ categories, totalCount = 0, counts
           <h2 className="font-heading text-xl font-black uppercase tracking-tight text-white sm:text-2xl">
             Featured <span className="text-cyan-400">Collections</span>
           </h2>
-          <p className="mt-1 text-sm text-white/50">Shop by curated lifestyle categories</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Shop by curated lifestyle categories</p>
         </div>
         <Link href="/category/all" className="shrink-0 text-sm text-cyan-300 hover:underline">
           View All ({totalCount}) →

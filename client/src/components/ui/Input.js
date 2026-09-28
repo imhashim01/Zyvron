@@ -9,13 +9,13 @@ import { useId } from "react";
 // one padding-left class and one padding-right class must ever be emitted
 // per field.
 const fieldClasses =
-  "w-full rounded-full border border-white/10 bg-white/5 py-2.5 text-sm text-white placeholder:text-white/40 transition focus:border-cyan-400";
+  "w-full rounded-full border border-white/10 bg-[var(--surface-card)] py-2.5 text-sm text-white placeholder:text-[var(--text-muted)] transition focus:border-cyan-400";
 
 function Field({ id, label, hint, error, children }) {
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={id} className="text-xs font-semibold text-white/70">
+        <label htmlFor={id} className="text-xs font-semibold text-[var(--text-secondary)]">
           {label}
         </label>
       )}
@@ -23,7 +23,7 @@ function Field({ id, label, hint, error, children }) {
       {error ? (
         <p className="text-xs text-red-400">{error}</p>
       ) : hint ? (
-        <p className="text-xs text-white/40">{hint}</p>
+        <p className="text-xs text-[var(--text-muted)]">{hint}</p>
       ) : null}
     </div>
   );
@@ -43,7 +43,7 @@ export function Input({ label, hint, error, id, icon, trailing, className = "", 
     <Field id={inputId} label={label} hint={hint} error={error}>
       <div className="relative">
         {icon && (
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/35">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
             {icon}
           </span>
         )}

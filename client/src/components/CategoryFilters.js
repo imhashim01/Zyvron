@@ -52,11 +52,11 @@ export default function CategoryFilters() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search this category…"
-          className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+          className="w-full rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400"
         />
         <button
           type="submit"
-          className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
+          className="rounded-full bg-[var(--surface-2)] px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
         >
           Search
         </button>
@@ -66,7 +66,7 @@ export default function CategoryFilters() {
         <button
           onClick={() => goto("all", { filter: "wishlist" })}
           className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-            isWishlist ? "bg-cyan-400 text-black" : "bg-white/5 text-white/70 hover:bg-white/10"
+            isWishlist ? "bg-cyan-400 text-black" : "bg-[var(--surface-card)] text-[var(--text-secondary)] hover:bg-white/10"
           }`}
         >
           ♥ Wishlist ({wishlist.length})
@@ -75,10 +75,10 @@ export default function CategoryFilters() {
         <select
           defaultValue={searchParams.get("sort") || "popular"}
           onChange={onSortChange}
-          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
+          className="rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white focus:border-cyan-400"
         >
           {SORTS.map((s) => (
-            <option key={s.value} value={s.value} className="bg-[#05060a]">
+            <option key={s.value} value={s.value} className="bg-[var(--background)]">
               {s.label}
             </option>
           ))}

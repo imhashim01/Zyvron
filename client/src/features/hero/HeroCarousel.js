@@ -76,8 +76,11 @@ export default function HeroCarousel({ slides }) {
       onTouchEnd={onTouchEnd}
       style={{
         borderColor: "rgba(0, 195, 255, 0.28)",
+        // Visibility pass: lightened the gradient's base stops slightly (was
+        // #061522/#040b15/#08091a) so the hero reads as its own distinct
+        // surface rather than nearly matching the page background behind it.
         background:
-          "radial-gradient(circle at 15% 15%, rgba(176,38,255,0.14), transparent 42%), radial-gradient(circle at 90% 0%, rgba(0, 153, 255, 0.1), transparent 40%), linear-gradient(135deg, #061522 0%, #040b15 55%, #08091a 100%)",
+          "radial-gradient(circle at 15% 15%, rgba(176,38,255,0.14), transparent 42%), radial-gradient(circle at 90% 0%, rgba(0, 153, 255, 0.1), transparent 40%), linear-gradient(135deg, #0a1d2e 0%, #071321 55%, #0b1220 100%)",
         boxShadow:
           "inset 0 1px 0 rgba(255,255,255,0.024), 0 15px 45px rgba(0,0,0,0.2), 0 0 40px rgba(0,229,255,0.05)",
       }}
@@ -93,12 +96,12 @@ export default function HeroCarousel({ slides }) {
       <div
         aria-hidden="true"
         className="animate-float-slow pointer-events-none absolute -left-16 top-0 h-72 w-72 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(176,38,255,0.22), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(176,38,255,0.16), transparent 70%)" }}
       />
       <div
         aria-hidden="true"
         className="animate-float-slow delay-2 pointer-events-none absolute -right-10 bottom-0 h-64 w-64 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(0,229,255,0.18), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(0,229,255,0.13), transparent 70%)" }}
       />
 
       <div className="relative grid gap-6 px-6 pb-8 pt-10 sm:gap-8 sm:px-10 sm:pt-14 lg:grid-cols-2 lg:items-center lg:gap-8 lg:pt-16">
@@ -120,7 +123,7 @@ export default function HeroCarousel({ slides }) {
                   {slide.title}
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-md text-sm text-white/60 sm:text-base lg:mx-0">
+                <p className="mx-auto mt-4 max-w-md text-sm text-[var(--text-secondary)] sm:text-base lg:mx-0">
                   {slide.description}
                 </p>
 
@@ -131,7 +134,7 @@ export default function HeroCarousel({ slides }) {
                 <div className="mt-3 flex items-center justify-center gap-3 lg:justify-start">
                   <span className="text-2xl font-bold text-white">{formatPKR(slide.price)}</span>
                   {slide.compareAtPrice > slide.price && (
-                    <span className="text-sm text-white/40 line-through">
+                    <span className="text-sm text-[var(--text-muted)] line-through">
                       {formatPKR(slide.compareAtPrice)}
                     </span>
                   )}
@@ -150,7 +153,7 @@ export default function HeroCarousel({ slides }) {
                       // on hover. Inline (not the shared .neon-* classes)
                       // since this is the only two-color glow in the app.
                       boxShadow:
-                        "0 0 18px rgba(0, 229, 255, 0.55), 0 0 38px rgba(168, 85, 247, 0.35)",
+                        "0 0 12px rgba(0, 229, 255, 0.4), 0 0 26px rgba(168, 85, 247, 0.26)",
                     }}
                   >
                     Shop Now →
@@ -185,7 +188,7 @@ export default function HeroCarousel({ slides }) {
               className="relative h-full w-full overflow-hidden rounded-[42px] border-2"
               style={{
                 borderColor: "rgba(255,255,255,0.15)",
-                boxShadow: "0 0 60px rgba(0,229,255,0.25), 0 0 100px rgba(176,38,255,0.15)",
+                boxShadow: "0 0 44px rgba(0,229,255,0.18), 0 0 76px rgba(176,38,255,0.11)",
               }}
             >
               {canUse3D ? (
@@ -214,7 +217,7 @@ export default function HeroCarousel({ slides }) {
             aria-label={`Show ${slide.title}`}
             aria-current={i === activeIndex}
             className={`h-2 rounded-full transition-all ${
-              i === activeIndex ? "w-7 bg-cyan-400" : "w-2 bg-white/25 hover:bg-white/40"
+              i === activeIndex ? "w-7 bg-cyan-400" : "w-2 bg-white/35 hover:bg-white/55"
             }`}
           />
         ))}

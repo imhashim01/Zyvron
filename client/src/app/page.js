@@ -71,7 +71,7 @@ export default async function HomePage() {
               <h2 className="font-heading text-xl font-bold text-white">
                 Loved by <span className="text-cyan-400">Customers</span>
               </h2>
-              <p className="mt-1 text-sm text-white/50">Our highest-rated products, real reviews</p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">Our highest-rated products, real reviews</p>
             </div>
             <Link href="/category/all?sort=rating" className="text-sm text-cyan-300 hover:underline">
               View all →
@@ -105,7 +105,7 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <p className="text-white/50">
+          <p className="text-[var(--text-secondary)]">
             Products will appear here once the catalog is loaded.
           </p>
         )}

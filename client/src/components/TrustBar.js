@@ -36,14 +36,14 @@ export default function TrustBar() {
             <Wrapper
               key={item.title}
               {...(item.href ? { href: item.href } : {})}
-              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-cyan-400/30"
+              className="flex items-center gap-3 rounded-2xl border border-white/[0.12] bg-[var(--surface-card)] px-4 py-3 transition hover:border-cyan-400/30"
             >
               <span className="text-xl">{item.icon}</span>
               <span className="min-w-0">
                 <span className="block truncate text-xs font-bold text-white sm:text-sm">
                   {item.title}
                 </span>
-                <span className="block truncate text-[11px] text-white/50">{item.sub}</span>
+                <span className="block truncate text-[11px] text-[var(--text-muted)]">{item.sub}</span>
               </span>
             </Wrapper>
           );

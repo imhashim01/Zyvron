@@ -71,7 +71,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en" className={`${jakarta.variable} ${grotesk.variable}`}>
-      <body className="flex min-h-screen flex-col bg-[#05060a] text-white antialiased">
+      <body className="flex min-h-screen flex-col bg-[var(--background)] text-white antialiased">
         <JsonLd data={orgJsonLd} />
         <JsonLd data={siteJsonLd} />
         <Providers>

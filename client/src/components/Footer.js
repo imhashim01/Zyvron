@@ -26,13 +26,13 @@ const WHATSAPP_DISPLAY = `0${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slic
 
 export default function Footer() {
   return (
-    <footer className="mt-16 bg-neutral-950 pb-6 pt-10">
+    <footer className="mt-16 bg-[var(--surface-header)] pb-6 pt-10">
       <Testimonials />
 
       <div className="mx-auto mt-10 grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:px-6 md:grid-cols-4">
         <div>
           <Logo size="md" href={null} />
-          <p className="mt-3 text-sm text-white/50">
+          <p className="mt-3 text-sm text-[var(--text-secondary)]">
             Your trusted online destination for premium wireless audio, smartwatches, gaming gear &amp;
             smart tech accessories in Pakistan.
           </p>
@@ -45,7 +45,7 @@ export default function Footer() {
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
             Popular Categories
           </h4>
-          <ul className="space-y-2 text-sm text-white/60">
+          <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             {CATEGORY_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="hover:text-cyan-300">
@@ -60,7 +60,7 @@ export default function Footer() {
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
             Customer Support
           </h4>
-          <ul className="space-y-2 text-sm text-white/60">
+          <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             {SUPPORT_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="hover:text-cyan-300">
@@ -90,14 +90,14 @@ export default function Footer() {
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-white">
             Stay Connected
           </h4>
-          <p className="mb-3 text-sm text-white/50">
+          <p className="mb-3 text-sm text-[var(--text-secondary)]">
             Receive flash sale alerts and exclusive discounts directly on your phone.
           </p>
           <NewsletterForm />
         </div>
       </div>
 
-      <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center gap-2 border-t border-white/10 px-4 pt-6 text-xs text-white/40 sm:flex-row sm:justify-between sm:px-6">
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center gap-2 border-t border-white/10 px-4 pt-6 text-xs text-[var(--text-muted)] sm:flex-row sm:justify-between sm:px-6">
         <p>© {new Date().getFullYear()} Zyvron Tech Accessories™. All rights reserved.</p>
         <div className="flex items-center gap-3">
           <Link href="/privacy-policy" className="hover:text-cyan-300">

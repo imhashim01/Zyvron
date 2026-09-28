@@ -55,7 +55,7 @@ export default function Testimonials() {
               </span>
               <div>
                 <p className="text-sm font-semibold text-white">{t.name}</p>
-                <p className="text-xs text-white/40">Verified Buyer</p>
+                <p className="text-xs text-[var(--text-muted)]">Verified Buyer</p>
               </div>
             </div>
           </div>

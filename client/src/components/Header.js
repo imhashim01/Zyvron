@@ -62,7 +62,7 @@ function MobileSidebar({ open, onClose, pathname }) {
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        className={`absolute inset-y-0 left-0 flex w-[80%] max-w-xs flex-col border-r border-white/10 bg-[#05060a] transition-transform duration-300 ${
+        className={`absolute inset-y-0 left-0 flex w-[80%] max-w-xs flex-col border-r border-white/10 bg-[var(--surface-header)] transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -95,7 +95,7 @@ function MobileSidebar({ open, onClose, pathname }) {
                     ? "text-amber-400 hover:bg-amber-400/10"
                     : isActive
                     ? "neon-text-cyan bg-cyan-400/10 text-cyan-300"
-                    : "text-white/80 hover:bg-white/5 hover:text-white"
+                    : "text-[var(--text-secondary)] hover:bg-white/5 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -104,7 +104,7 @@ function MobileSidebar({ open, onClose, pathname }) {
           })}
         </nav>
 
-        <div className="border-t border-white/10 px-5 py-4 text-xs text-white/50">
+        <div className="border-t border-white/10 px-5 py-4 text-xs text-[var(--text-muted)]">
           Free delivery over Rs. {FREE_SHIPPING_THRESHOLD.toLocaleString()} • Nationwide COD
         </div>
       </div>
@@ -145,14 +145,14 @@ export default function Header({ productCount }) {
   const searchPlaceholder = productCount ? `Search ${productCount}+ products…` : "Search products…";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#05060a]/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[var(--surface-header)]/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           aria-expanded={menuOpen}
-          className="neon-cyan-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white md:hidden"
+          className="neon-cyan-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--text-secondary)] transition hover:bg-white/10 hover:text-white md:hidden"
         >
           <HamburgerIcon />
         </button>
@@ -166,7 +166,7 @@ export default function Header({ productCount }) {
 
         <form onSubmit={onSearch} className="hidden flex-1 items-center md:flex">
           <div className="relative w-full">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
               <SearchIcon />
             </span>
             <input
@@ -174,12 +174,12 @@ export default function Header({ productCount }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
-              className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+              className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-[var(--surface-card)] py-2 pl-10 pr-4 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400"
             />
           </div>
         </form>
 
-        <nav className="ml-auto flex items-center gap-3 text-sm text-white/80">
+        <nav className="ml-auto flex items-center gap-3 text-sm text-[var(--text-secondary)]">
           {user ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
@@ -206,7 +206,7 @@ export default function Header({ productCount }) {
 
           <Link
             href="/cart"
-            className="neon-cyan-active-hover relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
+            className="neon-cyan-active-hover relative flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-card)] hover:bg-[var(--surface-2)]"
             aria-label="Cart"
           >
             <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -224,7 +224,7 @@ export default function Header({ productCount }) {
       </div>
 
       <div className="hidden border-t border-white/10 md:block">
-        <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-2.5 text-sm font-semibold text-white/70 sm:px-6">
+        <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] sm:px-6">
           {NAV_LINKS.map((link) => {
             const isActive = link.match ? link.match(pathname) : pathname === link.href;
             return (
@@ -248,7 +248,7 @@ export default function Header({ productCount }) {
 
       <form onSubmit={onSearch} className="border-t border-white/10 px-4 py-2 md:hidden">
         <div className="relative w-full">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
             <SearchIcon />
           </span>
           <input
@@ -256,7 +256,7 @@ export default function Header({ productCount }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            className="neon-cyan-hover w-full rounded-full border border-cyan-400/40 bg-[var(--surface-card)] py-2 pl-10 pr-4 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400"
           />
         </div>
       </form>

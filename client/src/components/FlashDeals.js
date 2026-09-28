@@ -19,8 +19,11 @@ export default function FlashDeals({ products }) {
       className="relative mx-auto max-w-7xl overflow-hidden rounded-[24px] border px-4 py-8 sm:px-6"
       style={{
         borderColor: "rgba(0,195,255,0.28)",
+        // Visibility pass: lightened the gradient's base stops slightly so
+        // this section reads as its own distinct surface, matching the same
+        // treatment applied to the hero above.
         background:
-          "radial-gradient(circle at 78% 15%, rgba(125,30,210,.13), transparent 38%), linear-gradient(120deg, #061722, #060d18 48%, #11091f)",
+          "radial-gradient(circle at 78% 15%, rgba(125,30,210,.13), transparent 38%), linear-gradient(120deg, #0a1e2c, #0a1420 48%, #170f28)",
       }}
     >
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -28,7 +31,7 @@ export default function FlashDeals({ products }) {
           <h2 className="font-heading text-xl font-bold text-white">
             Flash Deals &amp; <span className="text-cyan-400">Top Discounts</span>
           </h2>
-          <p className="mt-1 text-sm text-white/50">Limited Stock • Up to 50% Off</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Limited Stock • Up to 50% Off</p>
           <div className="mt-3">
             <FlashCountdown endsAt={endsAt} />
           </div>

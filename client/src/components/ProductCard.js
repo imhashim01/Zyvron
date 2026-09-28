@@ -20,7 +20,7 @@ export default function ProductCard({ product, ribbon = false }) {
   }
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.045] to-white/[0.01] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:bg-white/[0.06] hover:shadow-[0_18px_36px_rgba(0,217,255,0.14)]">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.12] bg-[var(--surface-card)] shadow-[0_4px_16px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:bg-[var(--surface-2)] hover:shadow-[0_18px_36px_rgba(0,217,255,0.14)]">
       <button
         type="button"
         onClick={() => toggleWishlist(product._id)}
@@ -74,11 +74,11 @@ export default function ProductCard({ product, ribbon = false }) {
       </Link>
 
       <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <span className="text-[11px] uppercase tracking-wide text-cyan-300/80">
+        <span className="text-[11px] uppercase tracking-wide text-cyan-300">
           {product.category?.name || product.category}
         </span>
         <Link href={`/product/${product.slug}`}>
-          <h3 className="line-clamp-2 text-sm font-semibold text-white/90 hover:text-cyan-300">
+          <h3 className="line-clamp-2 text-sm font-semibold text-white hover:text-cyan-300">
             {product.title}
           </h3>
         </Link>
@@ -86,7 +86,7 @@ export default function ProductCard({ product, ribbon = false }) {
         <div className="mt-1 flex items-baseline gap-2">
           <span className="neon-text-cyan text-lg font-bold text-white">{formatPKR(product.price)}</span>
           {product.compareAtPrice > product.price && (
-            <span className="text-xs text-white/40 line-through">
+            <span className="text-xs text-[var(--text-muted)] line-through">
               {formatPKR(product.compareAtPrice)}
             </span>
           )}
@@ -97,7 +97,7 @@ export default function ProductCard({ product, ribbon = false }) {
           <button
             type="button"
             disabled
-            className="mt-2 w-full rounded-full bg-white/10 py-2 text-sm font-bold text-white/40"
+            className="mt-2 w-full rounded-full bg-white/10 py-2 text-sm font-bold text-[var(--text-muted)]"
           >
             Out of stock
           </button>

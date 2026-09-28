@@ -33,8 +33,22 @@
 }
 
 :root {
-  --background: #05060a;
-  --foreground: #f5f5f7;
+  /* Visibility pass (Mohammad's request): the page background moved from
+     near-pure-black to a slightly lighter/deeper navy, and every "surface"
+     that sits on top of it now has its own distinguishable shade instead of
+     all of them resolving to ~3% white over the same near-black (which is
+     why cards, the header, and the page background used to read as one
+     flat color). Referenced via var() from Tailwind arbitrary values
+     (e.g. bg-[var(--surface-card)]) so every surface stays in sync from
+     this one place. */
+  --background: #05080d;
+  --foreground: #ffffff;
+  --surface-header: #080d15;
+  --surface-hero: #071321;
+  --surface-card: #0b111a;
+  --surface-2: #111827;
+  --text-secondary: #c4cbd6;
+  --text-muted: #9ca6b5;
 }
 
 body {
@@ -163,14 +177,15 @@ body {
 
 /* Neon accent glow - added per Mohammad's "site looks too dark" feedback
    (Session 14), then turned up per his follow-up that the "Subtle" pass
-   wasn't enough. Still scoped to interactive/attention elements only (nav,
+   wasn't enough. Scoped to interactive/attention elements only (nav,
    buttons, badges, prices) rather than repainting the dark-navy canvas
-   itself - but glow is now stronger throughout, and key CTAs/badges/prices
-   carry a persistent (always-on, not just hover) glow instead of only
-   lighting up on interaction. A tight bright core plus a soft outer bloom
-   (layered box-shadow/text-shadow), in the brand's existing cyan/violet,
-   reads as a true neon glow rather than the generic drop-shadows used
-   elsewhere.
+   itself. Turned back down slightly in the visibility pass (Session 21) -
+   the "Bold" intensity was fighting with text/price legibility on small
+   type, so every glow below is lighter than the Session 14 values, while
+   staying stronger than the original "Subtle" pass. A tight bright core
+   plus a soft outer bloom (layered box-shadow/text-shadow), in the brand's
+   existing cyan/violet, reads as a true neon glow rather than the generic
+   drop-shadows used elsewhere.
    - neon-cyan-hover / neon-text-cyan-hover: hover/focus-only glow, for
      secondary interactive elements (search bars, icon buttons, links).
    - neon-cyan-active / neon-violet-active: a persistent glow for things
@@ -185,8 +200,8 @@ body {
 .neon-cyan-hover:hover,
 .neon-cyan-hover:focus-visible {
   box-shadow:
-    0 0 14px rgba(0, 217, 255, 0.7),
-    0 0 34px rgba(0, 217, 255, 0.4);
+    0 0 10px rgba(0, 217, 255, 0.55),
+    0 0 22px rgba(0, 217, 255, 0.28);
 }
 
 .neon-text-cyan-hover {
@@ -195,26 +210,26 @@ body {
 .neon-text-cyan-hover:hover,
 .neon-text-cyan-hover:focus-visible {
   text-shadow:
-    0 0 10px rgba(0, 217, 255, 0.7),
-    0 0 22px rgba(0, 217, 255, 0.4);
+    0 0 7px rgba(0, 217, 255, 0.55),
+    0 0 15px rgba(0, 217, 255, 0.28);
 }
 
 .neon-cyan-active {
   box-shadow:
-    0 0 12px rgba(0, 217, 255, 0.65),
-    0 0 28px rgba(0, 217, 255, 0.35);
+    0 0 8px rgba(0, 217, 255, 0.45),
+    0 0 18px rgba(0, 217, 255, 0.24);
 }
 
 .neon-violet-active {
   box-shadow:
-    0 0 12px rgba(139, 92, 246, 0.65),
-    0 0 28px rgba(139, 92, 246, 0.35);
+    0 0 8px rgba(139, 92, 246, 0.45),
+    0 0 18px rgba(139, 92, 246, 0.24);
 }
 
 .neon-text-cyan {
   text-shadow:
-    0 0 10px rgba(0, 217, 255, 0.7),
-    0 0 22px rgba(0, 217, 255, 0.4);
+    0 0 6px rgba(0, 217, 255, 0.5),
+    0 0 13px rgba(0, 217, 255, 0.26);
 }
 
 /* Bold CTA combo: glows at rest, flares brighter on hover/focus. Used on
@@ -223,27 +238,27 @@ body {
 .neon-cyan-active-hover {
   transition: box-shadow 0.25s ease;
   box-shadow:
-    0 0 12px rgba(0, 217, 255, 0.6),
-    0 0 26px rgba(0, 217, 255, 0.32);
+    0 0 8px rgba(0, 217, 255, 0.45),
+    0 0 18px rgba(0, 217, 255, 0.24);
 }
 .neon-cyan-active-hover:hover,
 .neon-cyan-active-hover:focus-visible {
   box-shadow:
-    0 0 20px rgba(0, 217, 255, 0.85),
-    0 0 46px rgba(0, 217, 255, 0.5);
+    0 0 14px rgba(0, 217, 255, 0.65),
+    0 0 30px rgba(0, 217, 255, 0.38);
 }
 
 .neon-text-cyan-active-hover {
   transition: text-shadow 0.25s ease;
   text-shadow:
-    0 0 8px rgba(0, 217, 255, 0.55),
-    0 0 18px rgba(0, 217, 255, 0.3);
+    0 0 6px rgba(0, 217, 255, 0.4),
+    0 0 13px rgba(0, 217, 255, 0.22);
 }
 .neon-text-cyan-active-hover:hover,
 .neon-text-cyan-active-hover:focus-visible {
   text-shadow:
-    0 0 14px rgba(0, 217, 255, 0.85),
-    0 0 30px rgba(0, 217, 255, 0.5);
+    0 0 10px rgba(0, 217, 255, 0.65),
+    0 0 22px rgba(0, 217, 255, 0.38);
 }
 
 @media (prefers-reduced-motion: reduce) {
