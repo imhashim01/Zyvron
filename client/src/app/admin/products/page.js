@@ -15,8 +15,25 @@ const EMPTY_FORM = {
   description: "",
   stock: "10",
   isFlashSale: false,
+  flashSaleEndsAt: "",
+  isBestSeller: false,
+  isNewArrival: false,
   isFeatured: false,
 };
+
+// Converts a stored ISO date string into the "YYYY-MM-DDTHH:mm" shape a
+// <input type="datetime-local"> needs, in the browser's local time (the
+// same local-time assumption FlashCountdown/new Date() already make
+// everywhere else this field is read).
+function toDatetimeLocal(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+    d.getMinutes()
+  )}`;
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -79,6 +96,9 @@ export default function AdminProductsPage() {
       description: p.description || "",
       stock: p.stock ?? 0,
       isFlashSale: !!p.isFlashSale,
+      flashSaleEndsAt: toDatetimeLocal(p.flashSaleEndsAt),
+      isBestSeller: !!p.isBestSeller,
+      isNewArrival: !!p.isNewArrival,
       isFeatured: !!p.isFeatured,
     });
     setEditingId(p._id);
@@ -139,6 +159,11 @@ export default function AdminProductsPage() {
       price: Number(form.price),
       compareAtPrice: form.compareAtPrice ? Number(form.compareAtPrice) : undefined,
       stock: Number(form.stock),
+      // Only kept when Flash Sale is actually checked - sending null when
+      // it's unchecked (or left blank) clears any previously-set deadline
+      // instead of leaving a stale one behind after saving.
+      flashSaleEndsAt:
+        form.isFlashSale && form.flashSaleEndsAt ? new Date(form.flashSaleEndsAt).toISOString() : null,
     };
     try {
       if (editingId) {
@@ -217,21 +242,29 @@ export default function AdminProductsPage() {
               </option>
             ))}
           </select>
-          <input
-            required
-            type="number"
-            placeholder="Price"
-            value={form.price}
-            onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
-          />
-          <input
-            type="number"
-            placeholder="Compare-at price (optional)"
-            value={form.compareAtPrice}
-            onChange={(e) => setForm((f) => ({ ...f, compareAtPrice: e.target.value }))}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
-          />
+          <div>
+            <input
+              required
+              type="number"
+              placeholder="Sale Price (what customers pay)"
+              value={form.price}
+              onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+              className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            />
+          </div>
+          <div>
+            <input
+              type="number"
+              placeholder="Original Price (optional)"
+              value={form.compareAtPrice}
+              onChange={(e) => setForm((f) => ({ ...f, compareAtPrice: e.target.value }))}
+              className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400"
+            />
+            <p className="mt-1 px-2 text-[11px] text-white/40">
+              Set this higher than Sale Price to show a strikethrough + automatic % off badge — this is
+              what applies a sale/discount, including for Flash Sale products.
+            </p>
+          </div>
 
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-white/70">
@@ -358,22 +391,59 @@ export default function AdminProductsPage() {
             rows={2}
             className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:border-cyan-400 sm:col-span-2"
           />
+          <div>
+            <label className="flex items-center gap-2 text-sm text-white/70">
+              <input
+                type="checkbox"
+                checked={form.isFlashSale}
+                onChange={(e) => setForm((f) => ({ ...f, isFlashSale: e.target.checked }))}
+              />
+              Flash Sale
+            </label>
+            {form.isFlashSale && (
+              <div className="mt-2">
+                <label className="mb-1 block px-2 text-[11px] text-white/40">
+                  Flash Sale Ends At (drives the countdown shown in Flash Deals)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={form.flashSaleEndsAt}
+                  onChange={(e) => setForm((f) => ({ ...f, flashSaleEndsAt: e.target.value }))}
+                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-cyan-400"
+                />
+              </div>
+            )}
+          </div>
           <label className="flex items-center gap-2 text-sm text-white/70">
             <input
               type="checkbox"
-              checked={form.isFlashSale}
-              onChange={(e) => setForm((f) => ({ ...f, isFlashSale: e.target.checked }))}
+              checked={form.isBestSeller}
+              onChange={(e) => setForm((f) => ({ ...f, isBestSeller: e.target.checked }))}
             />
-            Flash Sale
+            Best Seller (Homepage)
           </label>
           <label className="flex items-center gap-2 text-sm text-white/70">
             <input
               type="checkbox"
-              checked={form.isFeatured}
-              onChange={(e) => setForm((f) => ({ ...f, isFeatured: e.target.checked }))}
+              checked={form.isNewArrival}
+              onChange={(e) => setForm((f) => ({ ...f, isNewArrival: e.target.checked }))}
             />
-            Featured (Homepage Hero)
+            New Arrival (Homepage)
           </label>
+          <div>
+            <label className="flex items-center gap-2 text-sm text-white/70">
+              <input
+                type="checkbox"
+                checked={form.isFeatured}
+                onChange={(e) => setForm((f) => ({ ...f, isFeatured: e.target.checked }))}
+              />
+              Featured (Homepage Hero)
+            </label>
+            <p className="mt-1 px-2 text-[11px] text-white/40">
+              Shows this product in the full-width Featured Spotlight section. Only one product should be
+              checked at a time — if more than one is, the homepage shows whichever one it fetches first.
+            </p>
+          </div>
           <div className="flex gap-3 sm:col-span-2">
             <button
               type="submit"

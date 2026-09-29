@@ -8,7 +8,7 @@ const CATEGORY_LINKS = [
   { href: "/category/smart-wearables", label: "Smart Wearables" },
   { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
   { href: "/category/mobile-accessories", label: "Mobile Accessories" },
-  { href: "/category/all?filter=flash", label: "⚡ Flash Deals (Up to 50% Off)" },
+  { href: "/category/all?filter=flash", label: "⚡ Flash Deals" },
 ];
 
 const SUPPORT_LINKS = [
@@ -34,8 +34,8 @@ export default function Footer() {
         <div>
           <Logo size="md" href={null} />
           <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            Your trusted online destination for premium wireless audio, smartwatches, gaming gear &amp;
-            smart tech accessories in Pakistan.
+            Your online destination for wireless audio, smart wearables, gaming gear and everyday tech
+            accessories in Pakistan.
           </p>
           <p className="mt-3 text-xs font-semibold text-cyan-300">
             Direct Cash on Delivery Across Pakistan

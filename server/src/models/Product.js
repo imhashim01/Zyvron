@@ -25,6 +25,14 @@ const productSchema = new mongoose.Schema(
     stock: { type: Number, default: 0, min: 0 },
     isFlashSale: { type: Boolean, default: false },
     flashSaleEndsAt: { type: Date, default: null },
+    isBestSeller: { type: Boolean, default: false },
+    isNewArrival: { type: Boolean, default: false },
+    // Drives the "Featured Spotlight" homepage section (one admin-flagged
+    // product at a time). Briefly removed from the admin form on 2026-09-29
+    // because it sat invisible with no product ever flagged - restored the
+    // same day once Mohammad confirmed he wants the checkbox back rather
+    // than an automatic pick, so remembering to flag a product is what
+    // makes the section appear.
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },

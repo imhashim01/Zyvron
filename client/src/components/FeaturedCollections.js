@@ -9,13 +9,29 @@ function CollectionCard({ href, image, name, tagline, count }) {
       href={href}
       className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:shadow-[0_18px_40px_rgba(0,217,255,0.18)]"
     >
-      <Image
-        src={image}
-        alt=""
-        fill
-        sizes="(min-width: 1024px) 25vw, 50vw"
-        className="object-cover transition duration-500 group-hover:scale-110"
-      />
+      {image ? (
+        <Image
+          src={image}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 25vw, 50vw"
+          className="object-cover transition duration-500 group-hover:scale-110"
+        />
+      ) : (
+        // A category with real stock but no fallback artwork in
+        // CATEGORY_META and no admin-set image yet (e.g. a brand-new
+        // category created outside the original 4, such as one added by a
+        // bulk-import script) - a plain brand-gradient tile instead of
+        // crashing next/image with an undefined src.
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 20%, rgba(0,217,255,0.18), transparent 55%), linear-gradient(135deg, #0a1a28, #0b1220)",
+          }}
+        />
+      )}
       <div
         aria-hidden="true"
         className="absolute inset-0"

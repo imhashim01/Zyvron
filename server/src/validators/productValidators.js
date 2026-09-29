@@ -13,6 +13,9 @@ const baseFields = [
   body("colors").optional().isArray(),
   body("isFlashSale").optional().isBoolean(),
   body("flashSaleEndsAt").optional({ checkFalsy: true }).isISO8601(),
+  body("isBestSeller").optional().isBoolean(),
+  body("isNewArrival").optional().isBoolean(),
+  body("isFeatured").optional().isBoolean(),
   body("isActive").optional().isBoolean(),
 ];
 

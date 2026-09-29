@@ -31,10 +31,10 @@ async function getProducts(params) {
 }
 
 // A product is only promoted (hero, Best Sellers, New Arrivals, Flash
-// Deals, Featured Spotlight, Lifestyle Blocks) while it's actually in
-// stock. ProductCard's own disabled "Out of stock" button state is
-// untouched everywhere else in the app (category pages, search, etc.) -
-// this only decides what the homepage actively pushes.
+// Deals, Lifestyle Blocks) while it's actually in stock. ProductCard's own
+// disabled "Out of stock" button state is untouched everywhere else in the
+// app (category pages, search, etc.) - this only decides what the
+// homepage actively pushes.
 function inStock(product) {
   return (product.stock ?? 1) > 0;
 }
@@ -45,8 +45,27 @@ export default async function HomePage() {
   // Catalog is small (see productController's own "catalog is small" note),
   // so one unpaginated fetch + client-side tally/ranking is both simpler and
   // far less load than a separate request per section.
-  const [flashSale, bestSellers, newArrivals, allActive, featuredList] = await Promise.all([
+  //
+  // Best Sellers / New Arrivals are now driven by real admin-set flags
+  // (isBestSeller / isNewArrival, checked per-product in the admin panel)
+  // rather than an algorithmic guess - but until Mohammad has actually
+  // checked those boxes on any product, the flagged lists come back empty.
+  // Rather than showing nothing (the same "invisible section" confusion
+  // that prompted removing the old Featured flag), each section falls back
+  // to its previous real, zero-invention ordering - reviewsCount desc for
+  // Best Sellers, createdAt desc for New Arrivals - until real picks exist.
+  const [
+    flashSale,
+    bestSellersFlagged,
+    newArrivalsFlagged,
+    bestSellersFallback,
+    newArrivalsFallback,
+    allActive,
+    featuredList,
+  ] = await Promise.all([
     getProducts({ flashSale: "true", limit: "10" }),
+    getProducts({ bestSeller: "true", limit: "10" }),
+    getProducts({ newArrival: "true", limit: "10" }),
     getProducts({ sort: "popular", limit: "10" }),
     // "newest" isn't a recognized sort key in productController's SORTERS
     // map, so it legitimately falls through to the controller's own real
@@ -65,15 +84,18 @@ export default async function HomePage() {
   }
 
   const flashSaleInStock = flashSale.filter(inStock);
-  const bestSellersInStock = bestSellers.filter(inStock);
-  const newArrivalsInStock = newArrivals.filter(inStock);
+  const bestSellersInStock = (bestSellersFlagged.length ? bestSellersFlagged : bestSellersFallback).filter(
+    inStock
+  );
+  const newArrivalsInStock = (newArrivalsFlagged.length ? newArrivalsFlagged : newArrivalsFallback).filter(
+    inStock
+  );
   const featuredProduct = featuredList.filter(inStock)[0] || null;
   const inStockActive = allActive.filter(inStock);
 
   // Best real product per category (rating, then reviewsCount, as
-  // tie-breakers) - reused for both the hero, so it's never dominated by a
-  // single product/category the way a sparse isFeatured flag alone could
-  // leave it, and for the lifestyle blocks below.
+  // tie-breakers) - used for the hero, so it's never dominated by a
+  // single product/category, and for the lifestyle blocks below.
   const topProductByCategory = {};
   for (const p of inStockActive) {
     const slug = p.category?.slug;

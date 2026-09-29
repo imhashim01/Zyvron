@@ -28,11 +28,17 @@ const SORTERS = {
 
 async function list(req, res, next) {
   try {
-    const { category, search, sort, page = 1, limit = 20, ids, flashSale, featured } = req.query;
+    const { category, search, sort, page = 1, limit = 20, ids, flashSale, featured, bestSeller, newArrival } =
+      req.query;
     const filter = { isActive: true };
 
     if (flashSale === "true") filter.isFlashSale = true;
+    // featured=true still works (kept for any older isFeatured:true
+    // document), but nothing in the admin UI can set isFeatured anymore -
+    // see the note on the schema field itself.
     if (featured === "true") filter.isFeatured = true;
+    if (bestSeller === "true") filter.isBestSeller = true;
+    if (newArrival === "true") filter.isNewArrival = true;
 
     if (ids) {
       const idList = String(ids)
