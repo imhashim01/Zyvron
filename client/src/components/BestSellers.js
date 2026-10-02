@@ -23,7 +23,12 @@ export default function BestSellers({ products }) {
             The tech everyone&apos;s adding to their setup.
           </p>
         </div>
-        <Link href="/category/all?sort=popular" className="shrink-0 text-sm text-cyan-300 hover:underline">
+        {/* filter=bestseller mirrors this section's own isBestSeller flag
+            (productController's bestSeller=true query param), so "View
+            all" shows the same flagged products shown here - not just
+            everything re-sorted by popularity, which is a different,
+            broader set. */}
+        <Link href="/category/all?filter=bestseller" className="shrink-0 text-sm text-cyan-300 hover:underline">
           View all →
         </Link>
       </div>

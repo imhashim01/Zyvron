@@ -21,7 +21,10 @@ export default function NewArrivals({ products }) {
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">Fresh tech. Just landed.</p>
         </div>
-        <Link href="/category/all" className="shrink-0 text-sm text-cyan-300 hover:underline">
+        {/* filter=new mirrors this section's own isNewArrival flag
+            (productController's newArrival=true query param) - previously
+            this linked to plain /category/all with no filter/sort at all. */}
+        <Link href="/category/all?filter=new" className="shrink-0 text-sm text-cyan-300 hover:underline">
           View all →
         </Link>
       </div>

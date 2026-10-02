@@ -12,14 +12,25 @@ const SORTS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-export default function CategoryFilters() {
+// Labels for the "View all" filter a homepage section deep-links with
+// (?filter=flash/bestseller/new) - shown as a clearable pill so it's
+// obvious the filter actually applied, not just guessed at.
+const FILTER_LABELS = {
+  flash: "⚡ Flash Deals",
+  bestseller: "🔥 Best Sellers",
+  new: "✨ New Arrivals",
+};
+
+export default function CategoryFilters({ categories = [], brands = [], currentSlug = "all" }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { wishlist } = useCart();
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  const isWishlist = searchParams.get("filter") === "wishlist";
+  const activeFilter = searchParams.get("filter");
+  const isWishlist = activeFilter === "wishlist";
+  const activeFilterLabel = FILTER_LABELS[activeFilter];
 
   function goto(slug, extra = {}) {
     const params = new URLSearchParams(searchParams.toString());
@@ -45,32 +56,86 @@ export default function CategoryFilters() {
     router.push(`${pathname}?${params.toString()}`);
   }
 
-  return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <form onSubmit={onSearchSubmit} className="flex w-full max-w-sm gap-2">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search this category…"
-          className="w-full rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400"
-        />
-        <button
-          type="submit"
-          className="rounded-full bg-[var(--surface-2)] px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
-        >
-          Search
-        </button>
-      </form>
+  function onCategoryChange(e) {
+    goto(e.target.value);
+  }
 
-      <div className="flex items-center gap-2">
+  // Brand stays a plain query param (unlike category, which is the route's
+  // own slug) so it can combine with whichever category page is already
+  // open, exactly like sort/search do.
+  function onBrandChange(e) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (e.target.value === "all") params.delete("brand");
+    else params.set("brand", e.target.value);
+    router.push(`${pathname}?${params.toString()}`);
+  }
+
+  function clearFilter() {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("filter");
+    router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ""}`);
+  }
+
+  return (
+    <div className="mb-6 flex flex-col gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <form onSubmit={onSearchSubmit} className="flex w-full max-w-sm gap-2">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search this category…"
+            className="w-full rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400"
+          />
+          <button
+            type="submit"
+            className="rounded-full bg-[var(--surface-2)] px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
+          >
+            Search
+          </button>
+        </form>
+
         <button
           onClick={() => goto("all", { filter: "wishlist" })}
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition sm:self-auto ${
             isWishlist ? "bg-cyan-400 text-black" : "bg-[var(--surface-card)] text-[var(--text-secondary)] hover:bg-white/10"
           }`}
         >
           ♥ Wishlist ({wishlist.length})
         </button>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <select
+          value={currentSlug}
+          onChange={onCategoryChange}
+          className="rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white focus:border-cyan-400"
+        >
+          <option value="all" className="bg-[var(--background)]">
+            All Categories
+          </option>
+          {categories.map((c) => (
+            <option key={c.slug} value={c.slug} className="bg-[var(--background)]">
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        {brands.length > 0 && (
+          <select
+            value={searchParams.get("brand") || "all"}
+            onChange={onBrandChange}
+            className="rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white focus:border-cyan-400"
+          >
+            <option value="all" className="bg-[var(--background)]">
+              All Brands
+            </option>
+            {brands.map((b) => (
+              <option key={b.slug} value={b.slug} className="bg-[var(--background)]">
+                {b.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <select
           defaultValue={searchParams.get("sort") || "popular"}
@@ -83,6 +148,16 @@ export default function CategoryFilters() {
             </option>
           ))}
         </select>
+
+        {activeFilterLabel && (
+          <button
+            onClick={clearFilter}
+            className="flex items-center gap-1.5 rounded-full bg-cyan-400 px-4 py-1.5 text-sm font-semibold text-black"
+            title="Clear this filter"
+          >
+            Showing: {activeFilterLabel} ✕
+          </button>
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,9 @@
     "seed:admin": "node src/seed/seedAdmin.js",
     "seed": "npm run seed:products && npm run seed:admin",
     "cleanup:inactive-products": "node src/seed/cleanupInactiveProducts.js",
-    "import:ronin-earbuds": "node src/seed/importRoninEarbuds.js"
+    "import:ronin-earbuds": "node src/seed/importRoninEarbuds.js",
+    "import:ronin-hnp": "node src/seed/importRoninHeadphonesNeckbandsPowerbanks.js",
+    "import:ronin-chargers": "node src/seed/importRoninChargers.js"
   },
   "license": "UNLICENSED",
   "dependencies": {

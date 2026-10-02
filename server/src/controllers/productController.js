@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Brand = require("../models/Brand");
 const Review = require("../models/Review");
 const User = require("../models/User");
 
@@ -28,7 +29,7 @@ const SORTERS = {
 
 async function list(req, res, next) {
   try {
-    const { category, search, sort, page = 1, limit = 20, ids, flashSale, featured, bestSeller, newArrival } =
+    const { category, brand, search, sort, page = 1, limit = 20, ids, flashSale, featured, bestSeller, newArrival } =
       req.query;
     const filter = { isActive: true };
 
@@ -52,6 +53,15 @@ async function list(req, res, next) {
       const categoryDoc = await Category.findOne({ slug: category });
       if (categoryDoc) filter.category = categoryDoc._id;
       else filter.category = null; // unknown category slug -> no results
+    }
+
+    // "All Catalogue" brand filter (dropdown, keyed by Brand.slug - same
+    // lookup-by-slug pattern as category above, added because the client
+    // had no way to filter by brand at all until now).
+    if (brand && brand !== "all") {
+      const brandDoc = await Brand.findOne({ slug: brand });
+      if (brandDoc) filter.brand = brandDoc._id;
+      else filter.brand = null; // unknown brand slug -> no results
     }
 
     if (search) {

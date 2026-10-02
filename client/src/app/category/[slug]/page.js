@@ -1,11 +1,21 @@
 import { Suspense } from "react";
 import { serverFetch } from "@/lib/api";
-import { CATEGORY_META } from "@/data/constants";
+import { CATEGORY_META, FALLBACK_CATEGORIES } from "@/data/constants";
 import CategoryFilters from "@/components/CategoryFilters";
 import ProductCard from "@/components/ProductCard";
 import WishlistGrid from "@/components/WishlistGrid";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL } from "@/data/constants";
+
+async function getCategories() {
+  const data = await serverFetch("/categories");
+  return Array.isArray(data) && data.length ? data : FALLBACK_CATEGORIES;
+}
+
+async function getBrands() {
+  const data = await serverFetch("/brands");
+  return Array.isArray(data) ? data : [];
+}
 
 // See lib/api.js's serverFetch comment - lowered from 3600s so admin-panel
 // product changes show up on the storefront within about a minute.
@@ -26,23 +36,39 @@ export default async function CategoryPage({ params, searchParams }) {
   const sp = await searchParams;
   const filter = sp?.filter;
 
+  const [categories, brands] = await Promise.all([getCategories(), getBrands()]);
+
   if (filter === "wishlist") {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <h1 className="mb-4 font-heading text-2xl font-bold text-white">My Wishlist</h1>
         <Suspense>
-          <CategoryFilters />
+          <CategoryFilters categories={categories} brands={brands} currentSlug={slug} />
         </Suspense>
         <WishlistGrid />
       </div>
     );
   }
 
+  // Category (from the route), the "View all" filter (flash/bestseller/new
+  // - each mirrors a homepage section's own real flag/query so the "View
+  // all" link actually shows the same set, not just a re-sorted list), and
+  // the brand dropdown all combine (AND together) rather than being
+  // mutually exclusive, so e.g. Best Sellers within one category+brand is
+  // possible even though nothing in the UI builds that combination yet.
   const query = {
     limit: "24",
     ...(sp?.search ? { search: sp.search } : {}),
     ...(sp?.sort ? { sort: sp.sort } : {}),
-    ...(filter === "flash" ? { flashSale: "true" } : slug !== "all" ? { category: slug } : {}),
+    ...(sp?.brand && sp.brand !== "all" ? { brand: sp.brand } : {}),
+    ...(slug !== "all" ? { category: slug } : {}),
+    ...(filter === "flash"
+      ? { flashSale: "true" }
+      : filter === "bestseller"
+      ? { bestSeller: "true" }
+      : filter === "new"
+      ? { newArrival: "true" }
+      : {}),
   };
   const qs = new URLSearchParams(query).toString();
   const data = await serverFetch(`/products?${qs}`);
@@ -63,7 +89,7 @@ export default async function CategoryPage({ params, searchParams }) {
       <JsonLd data={breadcrumbJsonLd} />
       <h1 className="mb-4 font-heading text-2xl font-bold text-white">{name}</h1>
       <Suspense>
-        <CategoryFilters />
+        <CategoryFilters categories={categories} brands={brands} currentSlug={slug} />
       </Suspense>
 
       {products.length > 0 ? (
