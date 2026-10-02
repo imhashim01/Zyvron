@@ -15,7 +15,8 @@
     "cleanup:inactive-products": "node src/seed/cleanupInactiveProducts.js",
     "import:ronin-earbuds": "node src/seed/importRoninEarbuds.js",
     "import:ronin-hnp": "node src/seed/importRoninHeadphonesNeckbandsPowerbanks.js",
-    "import:ronin-chargers": "node src/seed/importRoninChargers.js"
+    "import:ronin-chargers": "node src/seed/importRoninChargers.js",
+    "import:new-catalog-2": "node src/seed/importNewCatalog2.js"
   },
   "license": "UNLICENSED",
   "dependencies": {
