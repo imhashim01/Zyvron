@@ -4,9 +4,9 @@ import Reveal from "@/animations/Reveal";
 
 // The three promo cards under the homepage, in display order. Each one is
 // tied to a real category slug - the headline/eyebrow is just framing copy,
-// and `label` is the word shown in "Shop <label> →" (so the Audio & Speakers
-// category can read simply "Speakers" here without renaming the category
-// everywhere else in the store).
+// and `label` is the word shown in "Shop <label> →". The picture on each
+// card is the top-rated in-stock product of that category, so the Headphones
+// card automatically shows a real headphones photo.
 const LIFESTYLE_BLOCKS = [
   {
     slug: "earbuds",
@@ -15,10 +15,10 @@ const LIFESTYLE_BLOCKS = [
     headline: "Your soundtrack, wherever you go.",
   },
   {
-    slug: "audio-and-speakers",
-    label: "Speakers",
-    eyebrow: "FOR GOOD VIBES",
-    headline: "Big sound, pocket-sized.",
+    slug: "headphones",
+    label: "Headphones",
+    eyebrow: "FOR DEEP LISTENING",
+    headline: "Immerse yourself in every beat.",
   },
   {
     slug: "powerbanks",
@@ -29,7 +29,7 @@ const LIFESTYLE_BLOCKS = [
 ];
 
 /**
- * Up to 3 promotional blocks (Earbuds, Speakers, Powerbanks), each tied to a
+ * Up to 3 promotional blocks (Earbuds, Headphones, Powerbanks), each tied to a
  * real category that has real in-stock products and a real product image to
  * show - a category that doesn't exist yet, has no stock, or has no
  * representative image is simply skipped rather than filled in with a guess.
