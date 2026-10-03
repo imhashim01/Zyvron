@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { serverFetch } from "@/lib/api";
-import { CATEGORY_META, FALLBACK_CATEGORIES } from "@/data/constants";
+import { CATEGORY_GROUPS, CATEGORY_META, FALLBACK_CATEGORIES } from "@/data/constants";
 import CategoryFilters from "@/components/CategoryFilters";
 import ProductCard from "@/components/ProductCard";
 import WishlistGrid from "@/components/WishlistGrid";
@@ -21,9 +21,36 @@ async function getBrands() {
 // product changes show up on the storefront within about a minute.
 export const revalidate = 60;
 
+// Page title for a category slug. Reads the live category list first (so
+// categories added later - Earbuds, Powerbanks, Chargers, ... - get their own
+// real name instead of the generic "Products" the old CATEGORY_META-only
+// lookup produced), then falls back to the static metadata.
+function categoryName(slug, categories) {
+  if (slug === "all") return "All Products";
+  if (CATEGORY_GROUPS[slug]) return CATEGORY_GROUPS[slug].name;
+  return categories.find((c) => c.slug === slug)?.name || CATEGORY_META[slug]?.name || "Products";
+}
+
+// Same orderings as productController's SORTERS (+ the in-memory "discount"
+// sort and the controller's default createdAt-desc), used only to merge the
+// separately fetched member categories of a group back into one list.
+function sortProducts(list, sort) {
+  const discount = (p) => (p.compareAtPrice ? (p.compareAtPrice - p.price) / p.compareAtPrice : 0);
+  const byCreated = (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  const comparators = {
+    "price-low": (a, b) => a.price - b.price,
+    "price-high": (a, b) => b.price - a.price,
+    rating: (a, b) => (b.rating || 0) - (a.rating || 0),
+    popular: (a, b) => (b.reviewsCount || 0) - (a.reviewsCount || 0),
+    discount: (a, b) => discount(b) - discount(a),
+  };
+  return [...list].sort(comparators[sort] || byCreated);
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const name = slug === "all" ? "All Products" : CATEGORY_META[slug]?.name || "Products";
+  const categories = await getCategories();
+  const name = categoryName(slug, categories);
   return {
     title: name,
     description: `Shop ${name} at Zyvron Tech Accessories — premium quality, cash on delivery, free shipping over Rs. 3,000.`,
@@ -56,12 +83,11 @@ export default async function CategoryPage({ params, searchParams }) {
   // the brand dropdown all combine (AND together) rather than being
   // mutually exclusive, so e.g. Best Sellers within one category+brand is
   // possible even though nothing in the UI builds that combination yet.
-  const query = {
+  const baseQuery = {
     limit: "24",
     ...(sp?.search ? { search: sp.search } : {}),
     ...(sp?.sort ? { sort: sp.sort } : {}),
     ...(sp?.brand && sp.brand !== "all" ? { brand: sp.brand } : {}),
-    ...(slug !== "all" ? { category: slug } : {}),
     ...(filter === "flash"
       ? { flashSale: "true" }
       : filter === "bestseller"
@@ -70,11 +96,22 @@ export default async function CategoryPage({ params, searchParams }) {
       ? { newArrival: "true" }
       : {}),
   };
-  const qs = new URLSearchParams(query).toString();
-  const data = await serverFetch(`/products?${qs}`);
-  const products = data?.products || [];
 
-  const name = slug === "all" ? "All Products" : CATEGORY_META[slug]?.name || "Products";
+  async function fetchProducts(categorySlug) {
+    const query = categorySlug ? { ...baseQuery, category: categorySlug } : baseQuery;
+    const data = await serverFetch(`/products?${new URLSearchParams(query).toString()}`);
+    return data?.products || [];
+  }
+
+  // A group (e.g. "Gaming & Vlogging Accessories") is the union of several
+  // real categories: fetch each member with the exact same filters, then
+  // merge and re-sort. Any other slug is a single category (or "all").
+  const group = CATEGORY_GROUPS[slug];
+  const products = group
+    ? sortProducts((await Promise.all(group.members.map((member) => fetchProducts(member)))).flat(), sp?.sort)
+    : await fetchProducts(slug !== "all" ? slug : null);
+
+  const name = categoryName(slug, categories);
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

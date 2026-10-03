@@ -3,6 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/store/cartContext";
+import { CATEGORY_GROUPS } from "@/data/constants";
 
 const SORTS = [
   { value: "popular", label: "Most Popular" },
@@ -116,6 +117,13 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
           {categories.map((c) => (
             <option key={c.slug} value={c.slug} className="bg-[var(--background)]">
               {c.name}
+            </option>
+          ))}
+          {/* Combined storefront collections (see CATEGORY_GROUPS) - listed
+              too so the dropdown shows the right entry while one is open. */}
+          {Object.entries(CATEGORY_GROUPS).map(([groupSlug, group]) => (
+            <option key={groupSlug} value={groupSlug} className="bg-[var(--background)]">
+              {group.name}
             </option>
           ))}
         </select>

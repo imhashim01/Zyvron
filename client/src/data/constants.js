@@ -40,6 +40,19 @@ export const CATEGORY_META = {
   },
 };
 
+// A "group" is a storefront-only collection that shows the products of several
+// real categories at once (the API's /products?category= takes a single slug).
+// The category page resolves the members itself, so no backend change or new
+// database category is needed. "Gaming & Vlogging Accessories" combines the
+// existing "Gaming & PC Accessories" category (mice, etc.) with "Camera &
+// Vlogging Accessories" (ring light, tripods, wireless mics).
+export const CATEGORY_GROUPS = {
+  "gaming-and-vlogging": {
+    name: "Gaming & Vlogging Accessories",
+    members: ["gaming-and-pc-accessories", "camera-and-vlogging-accessories"],
+  },
+};
+
 export const FALLBACK_CATEGORIES = Object.entries(CATEGORY_META).map(([slug, meta]) => ({
   _id: slug,
   slug,

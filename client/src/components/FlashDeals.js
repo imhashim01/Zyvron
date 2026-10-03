@@ -41,7 +41,7 @@ export default function FlashDeals({ products }) {
         </Link>
       </div>
 
-      <Slider label="flash deals">
+      <Slider label="flash deals" autoplay>
         {products.map((p, i) => (
           <div
             key={p._id}

@@ -13,8 +13,8 @@ const NAV_LINKS = [
   { href: "/", label: "Home", match: (p) => p === "/" },
   { href: "/category/all", label: "All Catalog" },
   { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
-  { href: "/category/smart-wearables", label: "Smart Wearables" },
-  { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
+  { href: "/category/earbuds", label: "Earbuds" },
+  { href: "/category/gaming-and-vlogging", label: "Gaming & Vlogging Accessories" },
   { href: "/category/all?filter=flash", label: "⚡ Flash Sale", accent: true },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -224,7 +224,10 @@ export default function Header({ productCount }) {
       </div>
 
       <div className="hidden border-t border-white/10 md:block">
-        <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] sm:px-6">
+        {/* overflow-x-auto: the longer "Gaming & Vlogging Accessories" label
+            pushed this row past the container on mid-size screens - it now
+            scrolls sideways instead of overflowing the page. */}
+        <div className="no-scrollbar mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] sm:px-6">
           {NAV_LINKS.map((link) => {
             const isActive = link.match ? link.match(pathname) : pathname === link.href;
             return (

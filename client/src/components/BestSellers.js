@@ -33,7 +33,7 @@ export default function BestSellers({ products }) {
         </Link>
       </div>
 
-      <Slider label="best sellers">
+      <Slider label="best sellers" autoplay>
         {products.map((p, i) => (
           <div
             key={p._id}
