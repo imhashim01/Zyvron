@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -8,35 +7,13 @@ import { useCart } from "@/store/cartContext";
 import { discountPercent, formatPKR } from "@/lib/format";
 import StarRating from "@/components/StarRating";
 
-// Only fetched once a slide actually needs to render, and only after the
-// mount-time capability check below confirms WebGL is available and the
-// visitor hasn't asked for reduced motion - never part of the initial bundle.
-const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false, loading: () => null });
-
 const AUTO_ADVANCE_MS = 5500;
 
 export default function HeroCarousel({ slides }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [canUse3D, setCanUse3D] = useState(false);
   const touchStartX = useRef(null);
   const { addToCart } = useCart();
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-    // Phones (below Tailwind's sm breakpoint) show the product photo as the
-    // hero background instead of the 3D tile (it's hidden there), so don't
-    // spin up WebGL for something nobody can see.
-    if (window.matchMedia("(max-width: 639px)").matches) return;
-    try {
-      const canvas = document.createElement("canvas");
-      const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
-      if (gl) setCanUse3D(true);
-    } catch {
-      // no WebGL - stays on the CSS fallback
-    }
-  }, []);
 
   useEffect(() => {
     if (paused || slides.length <= 1) return undefined;
@@ -68,8 +45,6 @@ export default function HeroCarousel({ slides }) {
   function handleAddToCart(slide) {
     addToCart(slide, 1);
   }
-
-  const active = slides[activeIndex];
 
   return (
     <section
@@ -111,12 +86,12 @@ export default function HeroCarousel({ slides }) {
       {/* Phones only (below sm): the active product's photo fills the top of
           the card and fades into the card's dark background, with the text
           sitting on the dark part below it - so the very first screen shows
-          something to buy instead of only a block of text (the small
-          product tile used to sit below the buttons, off-screen). The photo
-          never sits directly behind the headline, so it stays readable over
-          any picture. Only the active slide and its two neighbours are
-          mounted, so a swipe cross-fades without loading every slide's photo
-          up front. sm and up are untouched. */}
+          something to buy instead of only a block of text. The photo never
+          sits directly behind the headline, so it stays readable over any
+          picture. Only the active slide and its two neighbours are mounted,
+          so a swipe cross-fades without loading every slide's photo up
+          front. From sm up the hero is text-only (the product picture tile
+          was removed at the owner's request). */}
       <div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-[70%] sm:hidden"
@@ -150,8 +125,11 @@ export default function HeroCarousel({ slides }) {
         />
       </div>
 
-      <div className="relative grid gap-6 px-6 pb-8 pt-10 max-sm:flex max-sm:min-h-[680px] max-sm:flex-col max-sm:justify-end max-sm:pb-6 max-sm:pt-8 sm:gap-8 sm:px-10 sm:pt-14 lg:grid-cols-2 lg:items-center lg:gap-8 lg:pt-16">
-        <div className="text-center max-sm:w-full max-sm:min-w-0 lg:text-left">
+      {/* One centred column on every screen size - the product picture tile
+          that used to sit to the right of the text has been removed, so
+          there is no second grid column to leave empty. */}
+      <div className="relative grid gap-6 px-6 pb-8 pt-10 max-sm:flex max-sm:min-h-[680px] max-sm:flex-col max-sm:justify-end max-sm:pb-6 max-sm:pt-8 sm:gap-8 sm:px-10 sm:pt-14 lg:pt-16">
+        <div className="text-center max-sm:w-full max-sm:min-w-0 sm:mx-auto sm:w-full sm:max-w-3xl">
           {/* Constant brand header - the H1 is Zyvron's own headline, not a
               single product's title, so the hero reads as a brand statement
               rather than a rotating single-product ad. */}
@@ -166,12 +144,12 @@ export default function HeroCarousel({ slides }) {
             Technology That Moves With You.
           </h1>
 
-          <p className="mx-auto mt-4 hidden max-w-md text-sm text-[var(--text-secondary)] sm:block sm:text-base lg:mx-0">
+          <p className="mx-auto mt-4 hidden max-w-xl text-sm text-[var(--text-secondary)] sm:block sm:text-base">
             Discover premium audio, smart wearables, charging gear and everyday tech — delivered across
             Pakistan.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/category/all"
               className="shimmer-sweep relative overflow-hidden rounded-2xl px-7 py-3.5 text-sm font-extrabold uppercase tracking-wide text-[#03101a] transition duration-300 hover:-translate-y-0.5 active:scale-95"
@@ -208,7 +186,7 @@ export default function HeroCarousel({ slides }) {
                   key={slide._id}
                   className={
                     i === activeIndex
-                      ? "flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start"
+                      ? "flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
                       : "hidden"
                   }
                 >
@@ -247,45 +225,9 @@ export default function HeroCarousel({ slides }) {
             })}
           </div>
         </div>
-
-        <div className="relative mx-auto flex w-full max-w-[220px] items-center justify-center py-2 max-sm:hidden sm:max-w-xs sm:py-3 md:max-w-sm md:py-4 lg:max-w-none lg:py-0">
-          {/* Scaled down on small screens on purpose - at the old fixed
-              max-w-[380px] this circle ate the entire viewport height on a
-              phone, pushing the price/CTA out of view and making the hero
-              feel oversized. It grows back to the original desktop size at
-              each breakpoint, so lg+ is pixel-identical to before. */}
-          <div
-            className="animate-pulse-glow relative aspect-square w-full max-w-[200px] rounded-full p-5 sm:max-w-[260px] sm:p-6 md:max-w-[320px] md:p-8 lg:max-w-[380px] lg:p-10"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(0,229,255,0.18) 0%, rgba(176,38,255,0.12) 55%, transparent 75%)",
-            }}
-          >
-            <div
-              className="relative h-full w-full overflow-hidden rounded-[42px] border-2"
-              style={{
-                borderColor: "rgba(255,255,255,0.15)",
-                boxShadow: "0 0 44px rgba(0,229,255,0.18), 0 0 76px rgba(176,38,255,0.11)",
-              }}
-            >
-              {canUse3D ? (
-                <Hero3D images={slides.map((s) => s.image)} activeIndex={activeIndex} />
-              ) : (
-                <Image
-                  src={active.image}
-                  alt={active.title}
-                  fill
-                  sizes="(min-width: 1024px) 380px, (min-width: 768px) 320px, (min-width: 640px) 260px, 200px"
-                  className="object-cover"
-                  priority
-                />
-              )}
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className="relative flex items-center justify-center gap-2 pb-7 lg:justify-start lg:pl-10">
+      <div className="relative flex items-center justify-center gap-2 pb-7">
         {slides.map((slide, i) => (
           <button
             key={slide._id}
