@@ -8,7 +8,7 @@ import ComplaintForm from "@/components/ComplaintForm";
 
 function TrackOrderInner() {
   const searchParams = useSearchParams();
-  const [orderNumber, setOrderNumber] = useState(searchParams.get("order") || "");
+  const [orderNumber, setOrderNumber] = useState(searchParams.get("order") || searchParams.get("orderNumber") || "");
   const [phone, setPhone] = useState("");
   const [order, setOrder] = useState(null);
   const [error, setError] = useState("");
@@ -47,7 +47,7 @@ function TrackOrderInner() {
       } catch {
         // keep showing last known status on a transient failure
       }
-    }, 15000);
+    }, 60000);
     return () => clearInterval(pollRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order?.orderNumber]);

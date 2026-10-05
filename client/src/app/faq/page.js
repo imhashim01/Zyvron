@@ -1,5 +1,5 @@
 import PageHeader from "@/components/ui/PageHeader";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, SITE_NAME } from "@/data/constants";
+import { SITE_NAME } from "@/data/constants";
 
 export const metadata = {
   title: "FAQ",
@@ -14,7 +14,7 @@ function faqs() {
     },
     {
       q: "How much does delivery cost?",
-      a: `Delivery is free on orders over Rs. ${FREE_SHIPPING_THRESHOLD.toLocaleString()}. Orders below that are charged a flat Rs. ${SHIPPING_FEE} shipping fee, shown clearly at checkout before you confirm.`,
+      a: "Delivery is free on every order, all over Pakistan - no minimum order and no hidden charges.",
     },
     {
       q: "How can I track my order?",

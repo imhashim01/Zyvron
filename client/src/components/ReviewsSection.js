@@ -20,6 +20,7 @@ export default function ReviewsSection({ productId }) {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", rating: 5, comment: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [votedIds, setVotedIds] = useState([]);
 
   useEffect(() => {
@@ -49,7 +50,11 @@ export default function ReviewsSection({ productId }) {
 
   async function onSubmit(e) {
     e.preventDefault();
-    if (!form.name.trim() || !form.comment.trim()) return;
+    if (!form.name.trim() || !form.comment.trim()) {
+      setSubmitError("Please add your name and a short comment.");
+      return;
+    }
+    setSubmitError("");
     setSubmitting(true);
     try {
       const created = await apiJson(`/products/${productId}/reviews`, {
@@ -58,8 +63,12 @@ export default function ReviewsSection({ productId }) {
       });
       setReviews((prev) => [created.review || created, ...prev]);
       setForm({ name: "", rating: 5, comment: "" });
-    } catch {
-      // surfaced implicitly by the form staying filled
+    } catch (err) {
+      setSubmitError(
+        err.status === 429
+          ? "You've posted several reviews just now - please try again in a few minutes."
+          : err.message || "Couldn't submit your review. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -122,6 +131,7 @@ export default function ReviewsSection({ productId }) {
         >
           {submitting ? "Submitting…" : "Submit Review"}
         </button>
+        {submitError && <p className="text-xs text-red-400">{submitError}</p>}
       </form>
 
       {loading ? (

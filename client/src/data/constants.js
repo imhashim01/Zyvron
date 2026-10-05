@@ -1,7 +1,9 @@
 export const SITE_NAME = "Zyvron Tech Accessories";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
-export const FREE_SHIPPING_THRESHOLD = 3000;
-export const SHIPPING_FEE = 199;
+// Delivery is free on every order, nationwide. Must match SHIPPING_FEE in
+// server/src/controllers/orderController.js - the server is what actually
+// prices the order.
+export const SHIPPING_FEE = 0;
 
 // Support WhatsApp number (Pakistan), in wa.me's required international
 // format: no leading 0, no "+", country code prepended.

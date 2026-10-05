@@ -30,6 +30,18 @@ async function sendEmail({ to, subject, html }) {
   }
 }
 
+// Customer-typed text (name, address, ...) and product titles are dropped into
+// HTML email bodies below - escape them so a "name" like <a href=...> can't
+// inject links or markup into the store owner's inbox.
+function esc(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const wrap = (title, bodyHtml) => `
   <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#111">
     <h2 style="color:#05060a">${title}</h2>
@@ -42,7 +54,7 @@ function sendWelcomeEmail(user) {
   return sendEmail({
     to: user.email,
     subject: "Welcome to Zyvron",
-    html: wrap("Welcome to Zyvron!", `<p>Hi ${user.name}, thanks for creating an account with us. Start browsing premium gadgets and smart tech.</p>`),
+    html: wrap("Welcome to Zyvron!", `<p>Hi ${esc(user.name)}, thanks for creating an account with us. Start browsing premium gadgets and smart tech.</p>`),
   });
 }
 
@@ -52,7 +64,7 @@ function sendResetPasswordEmail(user, resetUrl) {
     subject: "Reset your Zyvron password",
     html: wrap(
       "Reset your password",
-      `<p>Hi ${user.name}, click the link below to reset your password. This link expires in 1 hour.</p>
+      `<p>Hi ${esc(user.name)}, click the link below to reset your password. This link expires in 1 hour.</p>
        <p><a href="${resetUrl}" style="background:#00D9FF;color:#000;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Reset Password</a></p>
        <p>If you didn't request this, you can safely ignore this email.</p>`
     ),
@@ -62,7 +74,7 @@ function sendResetPasswordEmail(user, resetUrl) {
 function sendOrderConfirmationEmail(order) {
   if (!order.customer || !order.customer.email) return Promise.resolve(false);
   const itemsHtml = order.items
-    .map((i) => `<li>${i.title} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
+    .map((i) => `<li>${esc(i.title)} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
     .join("");
   const trackUrl = `${clientUrl}/track-order?orderNumber=${encodeURIComponent(order.orderNumber)}`;
   return sendEmail({
@@ -70,11 +82,11 @@ function sendOrderConfirmationEmail(order) {
     subject: `Thank you for your order — Zyvron (${order.orderNumber})`,
     html: wrap(
       "Thank you for ordering!",
-      `<p>Hi ${order.customer.name}, thank you for ordering with Zyvron. We've received your order <strong>${order.orderNumber}</strong> and will get it to you soon.</p>
+      `<p>Hi ${esc(order.customer.name)}, thank you for ordering with Zyvron. We've received your order <strong>${order.orderNumber}</strong> and will get it to you soon.</p>
        <ul>${itemsHtml}</ul>
        <p>Subtotal: Rs. ${order.subtotal}<br/>Discount: Rs. ${order.discount}<br/>Shipping: Rs. ${order.shippingFee}<br/><strong>Total: Rs. ${order.total}</strong></p>
        <p>Payment method: ${order.paymentMethod}</p>
-       <p>Estimated delivery: 2-4 working days${order.shippingFee === 0 ? " (free shipping applied)" : ""}.</p>
+       <p>Estimated delivery: 2-5 working days after dispatch.</p>
        <p><a href="${trackUrl}" style="background:#00D9FF;color:#000;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">Track your order</a></p>`
     ),
   });
@@ -87,7 +99,7 @@ function sendOrderStatusEmail(order) {
     subject: `Order ${order.orderNumber} update: ${order.status}`,
     html: wrap(
       "Your order status has changed",
-      `<p>Hi ${order.customer.name}, your order <strong>${order.orderNumber}</strong> is now: <strong>${order.status.toUpperCase()}</strong>.</p>`
+      `<p>Hi ${esc(order.customer.name)}, your order <strong>${order.orderNumber}</strong> is now: <strong>${order.status.toUpperCase()}</strong>.</p>`
     ),
   });
 }
@@ -95,17 +107,17 @@ function sendOrderStatusEmail(order) {
 /** Internal notification to the store owner every time a new order comes in - not customer-facing. */
 function sendAdminNewOrderEmail(order) {
   const itemsHtml = order.items
-    .map((i) => `<li>${i.title} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
+    .map((i) => `<li>${esc(i.title)} x ${i.quantity} - Rs. ${i.price * i.quantity}</li>`)
     .join("");
   return sendEmail({
     to: orderNotifyEmail,
     subject: `New order ${order.orderNumber} from ${order.customer.name}`,
     html: wrap(
       "New order placed",
-      `<p><strong>${order.customer.name}</strong> placed order <strong>${order.orderNumber}</strong>.</p>
-       <p>Phone: ${order.customer.phone}<br/>
-       Email: ${order.customer.email || "-"}<br/>
-       Address: ${order.customer.address}, ${order.customer.city}</p>
+      `<p><strong>${esc(order.customer.name)}</strong> placed order <strong>${order.orderNumber}</strong>.</p>
+       <p>Phone: ${esc(order.customer.phone)}<br/>
+       Email: ${esc(order.customer.email || "-")}<br/>
+       Address: ${esc(order.customer.address)}, ${esc(order.customer.city)}</p>
        <ul>${itemsHtml}</ul>
        <p>Subtotal: Rs. ${order.subtotal}<br/>Discount: Rs. ${order.discount}<br/>Shipping: Rs. ${order.shippingFee}<br/><strong>Total: Rs. ${order.total}</strong></p>
        <p>Payment method: ${order.paymentMethod}</p>`

@@ -7,6 +7,7 @@ import { CATEGORY_GROUPS } from "@/data/constants";
 import CategoryIcon from "./CategoryIcon";
 
 const SORTS = [
+  { value: "newest", label: "Newest" },
   { value: "popular", label: "Most Popular" },
   { value: "price-low", label: "Price: Low to High" },
   { value: "price-high", label: "Price: High to Low" },
@@ -154,7 +155,7 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
         )}
 
         <select
-          defaultValue={searchParams.get("sort") || "popular"}
+          defaultValue={searchParams.get("sort") || "newest"}
           onChange={onSortChange}
           className="rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white focus:border-cyan-400"
         >

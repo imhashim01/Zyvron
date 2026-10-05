@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const Brand = require("../models/Brand");
@@ -42,10 +43,12 @@ async function list(req, res, next) {
     if (newArrival === "true") filter.isNewArrival = true;
 
     if (ids) {
+      // Drop malformed ids (e.g. a stale wishlist entry) - one bad id would
+      // otherwise fail the whole query with a CastError 500.
       const idList = String(ids)
         .split(",")
         .map((id) => id.trim())
-        .filter(Boolean);
+        .filter((id) => mongoose.isValidObjectId(id));
       filter._id = { $in: idList };
     }
 
@@ -65,10 +68,13 @@ async function list(req, res, next) {
     }
 
     if (search) {
+      // Match the shopper's text literally: unescaped, a search like "(" or
+      // "c++" is an invalid regex and used to crash this route with a 500.
+      const pattern = String(search).slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       filter.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-        { tags: { $regex: search, $options: "i" } },
+        { title: { $regex: pattern, $options: "i" } },
+        { description: { $regex: pattern, $options: "i" } },
+        { tags: { $regex: pattern, $options: "i" } },
       ];
     }
 

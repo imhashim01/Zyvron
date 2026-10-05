@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/store/cartContext";
 import { formatPKR } from "@/lib/format";
-import FreeShippingBar from "@/components/FreeShippingBar";
 
 export default function CartPage() {
-  const { cart, updateQuantity, removeFromCart, subtotal, shippingFee, hydrated } = useCart();
+  const { cart, updateQuantity, removeFromCart, subtotal, shippingFee, clearBuyNow, hydrated } = useCart();
 
   if (!hydrated) return null;
 
@@ -25,7 +24,6 @@ export default function CartPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <h1 className="mb-6 font-heading text-2xl font-bold text-white">Your Cart</h1>
-      <FreeShippingBar />
 
       <div className="space-y-4">
         {cart.map((item) => (
@@ -82,8 +80,11 @@ export default function CartPage() {
           <span>Total</span>
           <span>{formatPKR(subtotal + shippingFee)}</span>
         </div>
+        {/* Clears any abandoned "Buy Now" item first - checkout shows that
+            single item instead of the cart while one is pending. */}
         <Link
           href="/checkout"
+          onClick={clearBuyNow}
           className="mt-3 block rounded-full bg-cyan-400 py-3 text-center text-sm font-bold text-black hover:bg-cyan-300"
         >
           Proceed to Checkout

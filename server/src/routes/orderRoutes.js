@@ -8,8 +8,18 @@ const orderValidators = require("../validators/orderValidators");
 const router = express.Router();
 
 const trackLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, standardHeaders: true, legacyHeaders: false });
+// Every order reserves stock immediately (COD, no payment step), so cap how
+// many one visitor can place - otherwise a script could tie up the whole
+// inventory with fake orders.
+const createLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many orders from this connection - please try again later or contact us on WhatsApp." },
+});
 
-router.post("/", attachUserIfPresent, orderValidators.create, validate, orders.create);
+router.post("/", createLimiter, attachUserIfPresent, orderValidators.create, validate, orders.create);
 router.get("/track/:orderNumber", trackLimiter, orderValidators.track, validate, orders.track);
 router.get("/mine", protect, orders.mine);
 

@@ -1,12 +1,8 @@
-import { FREE_SHIPPING_THRESHOLD } from "@/data/constants";
-
 /**
  * Slim, global strip above the header - real, existing policies only
- * (nationwide delivery, the site's actual free-shipping threshold, nationwide
- * COD, the same 7-day replacement window already used on TrustBar/Warranty &
- * Support). The free-delivery line keeps its Rs. threshold on purpose: the
- * cart and checkout still charge the standard shipping fee under it, so the
- * bar must not promise more than checkout delivers.
+ * (free nationwide delivery on every order - SHIPPING_FEE is 0 on both client
+ * and server - nationwide COD, the same 7-day replacement window already used
+ * on TrustBar/Warranty & Support).
  * Deliberately quieter than the hero: no glow, no animation, small type.
  * On phones only the free-delivery line shows (it wraps instead of being
  * cut off); the other two policies join it from the sm breakpoint up.

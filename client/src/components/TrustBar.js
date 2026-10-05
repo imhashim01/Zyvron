@@ -1,11 +1,10 @@
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
-import { FREE_SHIPPING_THRESHOLD } from "@/data/constants";
 
 const ITEMS = [
   {
     icon: "truck",
-    title: `Free Delivery Over Rs. ${FREE_SHIPPING_THRESHOLD.toLocaleString()}`,
+    title: "Free Delivery",
     sub: "Nationwide across Pakistan",
   },
   {

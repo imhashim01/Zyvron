@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { apiJson } from "@/lib/api";
 import { useAuth } from "./authContext";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "@/data/constants";
+import { SHIPPING_FEE } from "@/data/constants";
 
 const CartContext = createContext(null);
 const CART_KEY = "zyvron_cart";
@@ -214,13 +214,8 @@ export function CartProvider({ children }) {
     ? buyNowItem.product.price * buyNowItem.quantity
     : subtotal;
 
-  const isFreeShipping = checkoutSubtotal >= FREE_SHIPPING_THRESHOLD || checkoutItems.length === 0;
-  const shippingFee = isFreeShipping ? 0 : SHIPPING_FEE;
-  const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - checkoutSubtotal);
-  const freeShippingProgress = Math.min(
-    100,
-    Math.round((checkoutSubtotal / FREE_SHIPPING_THRESHOLD) * 100)
-  );
+  const shippingFee = SHIPPING_FEE;
+  const isFreeShipping = shippingFee === 0;
 
   const value = {
     cart,
@@ -239,10 +234,6 @@ export function CartProvider({ children }) {
     checkoutSubtotal,
     isFreeShipping,
     shippingFee,
-    freeShippingRemaining,
-    freeShippingProgress,
-    FREE_SHIPPING_THRESHOLD,
-    SHIPPING_FEE,
     hydrated,
     isAuthenticated,
   };

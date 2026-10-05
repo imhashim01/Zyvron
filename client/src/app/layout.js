@@ -28,7 +28,7 @@ export const metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free nationwide shipping on orders over Rs. 3,000.",
+    "Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free delivery all over Pakistan.",
   icons: {
     icon: [{ url: "/favicon.ico" }, { url: "/favicon-256.png", sizes: "256x256" }],
     apple: "/apple-touch-icon.png",

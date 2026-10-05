@@ -1,7 +1,14 @@
 export default function StarRating({ rating = 0, count, size = "w-4 h-4" }) {
-  const rounded = Math.round(rating * 2) / 2;
+  // Products start at the schema's default 4.5 rating before anyone has
+  // reviewed them - with a count of 0, show empty stars rather than a
+  // rating no customer actually gave.
+  const unrated = count === 0;
+  const rounded = unrated ? 0 : Math.round(rating * 2) / 2;
   return (
-    <span className="inline-flex items-center gap-1" aria-label={`${rating} out of 5 stars`}>
+    <span
+      className="inline-flex items-center gap-1"
+      aria-label={unrated ? "No reviews yet" : `${rating} out of 5 stars`}
+    >
       <span className="flex text-amber-400">
         {[1, 2, 3, 4, 5].map((n) => (
           <svg key={n} viewBox="0 0 20 20" fill="currentColor" className={size} aria-hidden="true">
@@ -13,7 +20,7 @@ export default function StarRating({ rating = 0, count, size = "w-4 h-4" }) {
         ))}
       </span>
       {typeof count === "number" && (
-        <span className="text-xs text-white/50">({count})</span>
+        <span className="text-xs text-white/50">{unrated ? "No reviews yet" : `(${count})`}</span>
       )}
     </span>
   );

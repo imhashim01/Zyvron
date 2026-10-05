@@ -45,7 +45,19 @@ app.use(express.json());
 app.use(cookieParser());
 if (nodeEnv !== "test") app.use(morgan(nodeEnv === "production" ? "combined" : "dev"));
 
-const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false });
+// Reads (GET) are exempt: the storefront's server-side rendering fetches the
+// catalog from Vercel's shared egress IPs, so every shopper's page view lands
+// in the same few rate-limit buckets - 300 per 15 min across *all* visitors
+// would blank out category/search pages on a busy day. Every write (orders,
+// login, reviews, ...) is still limited here, and the sensitive GET (order
+// tracking) keeps its own limiter in orderRoutes.js.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === "GET" || req.method === "HEAD" || req.method === "OPTIONS",
+});
 app.use("/api", apiLimiter);
 
 app.get("/api/health", (req, res) => res.status(200).json({ status: "ok" }));

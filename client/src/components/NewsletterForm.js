@@ -27,27 +27,27 @@ export default function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-2 sm:flex-row">
+    <form onSubmit={onSubmit} className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <input
         type="tel"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="03XXXXXXXXX"
-        className="w-full rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400 sm:w-56"
+        className="w-full rounded-full border border-white/10 bg-[var(--surface-card)] px-4 py-2 text-sm text-white placeholder:text-[var(--text-muted)] focus:border-cyan-400 sm:w-auto sm:min-w-0 sm:flex-1 sm:basis-40"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300"
+        className="shrink-0 rounded-full bg-cyan-400 px-5 py-2 text-sm font-bold text-black hover:bg-cyan-300"
       >
         {status === "loading" ? "Subscribing…" : "Subscribe"}
       </button>
-      {status === "success" && <span className="text-xs text-emerald-400">Subscribed!</span>}
+      {status === "success" && <span className="basis-full text-xs text-emerald-400">Subscribed!</span>}
       {status === "invalid" && (
-        <span className="text-xs text-red-400">Enter a valid 11-digit phone number.</span>
+        <span className="basis-full text-xs text-red-400">Enter a valid 11-digit phone number.</span>
       )}
       {status === "error" && (
-        <span className="text-xs text-red-400">Couldn&apos;t subscribe right now.</span>
+        <span className="basis-full text-xs text-red-400">Couldn&apos;t subscribe right now.</span>
       )}
     </form>
   );

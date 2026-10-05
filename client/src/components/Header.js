@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "@/store/authContext";
 import { useCart } from "@/store/cartContext";
-import { FREE_SHIPPING_THRESHOLD } from "@/data/constants";
 
 const NAV_LINKS = [
   { href: "/", label: "Home", match: (p) => p === "/" },
@@ -105,7 +104,7 @@ function MobileSidebar({ open, onClose, pathname }) {
         </nav>
 
         <div className="border-t border-white/10 px-5 py-4 text-xs text-[var(--text-muted)]">
-          Free delivery over Rs. {FREE_SHIPPING_THRESHOLD.toLocaleString()} • Nationwide COD
+          Free delivery all over Pakistan • Nationwide COD
         </div>
       </div>
     </div>,

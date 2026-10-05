@@ -30,7 +30,7 @@ export default function Footer() {
           now lives on the homepage itself, in its proper "Real Customer
           Reviews" position - see Testimonials.js and app/page.js - rather
           than repeating on every single page's footer. */}
-      <div className="mx-auto grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:px-6 md:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-10 border-t border-white/10 px-4 pt-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
         <div>
           <Logo size="md" href={null} />
           <p className="mt-3 text-sm text-[var(--text-secondary)]">

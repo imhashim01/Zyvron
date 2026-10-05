@@ -1,7 +1,7 @@
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, SITE_NAME } from "@/data/constants";
+import { SITE_NAME } from "@/data/constants";
 
 export const metadata = {
   title: "Shipping & Delivery",
@@ -15,7 +15,7 @@ const SECTIONS = [
   },
   {
     title: "Delivery Charges",
-    body: `Free delivery on orders over Rs. ${FREE_SHIPPING_THRESHOLD.toLocaleString()}. Orders below that carry a flat Rs. ${SHIPPING_FEE} shipping fee, shown at checkout before you confirm - never a surprise on delivery.`,
+    body: "Delivery is free on every order, all over Pakistan - no minimum order value and never a surprise charge on delivery.",
   },
   {
     title: "Dispatch & Delivery Time",

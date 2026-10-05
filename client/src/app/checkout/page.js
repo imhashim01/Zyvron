@@ -111,6 +111,10 @@ export default function CheckoutPage() {
           Your tracking number is{" "}
           <span className="font-mono font-bold text-cyan-300">{order.orderNumber}</span>
         </p>
+        <p className="mb-2 text-sm text-white/70">
+          Total to pay on delivery:{" "}
+          <span className="font-bold text-white">{formatPKR(order.total)}</span>
+        </p>
         <p className="mb-8 text-sm text-white/50">
           Payment method: Cash on Delivery. We&apos;ll call you to confirm before dispatch.
         </p>
