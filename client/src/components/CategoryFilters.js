@@ -36,6 +36,8 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
 
   function goto(slug, extra = {}) {
     const params = new URLSearchParams(searchParams.toString());
+    // Any change of category / filter starts again from the first page.
+    params.delete("page");
     Object.entries(extra).forEach(([k, v]) => {
       if (v == null || v === "") params.delete(k);
       else params.set(k, v);
@@ -47,6 +49,7 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
   function onSearchSubmit(e) {
     e.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
     if (search.trim()) params.set("search", search.trim());
     else params.delete("search");
     router.push(`${pathname}?${params.toString()}`);
@@ -54,6 +57,7 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
 
   function onSortChange(e) {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
     params.set("sort", e.target.value);
     router.push(`${pathname}?${params.toString()}`);
   }
@@ -67,6 +71,7 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
   // open, exactly like sort/search do.
   function onBrandChange(e) {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
     if (e.target.value === "all") params.delete("brand");
     else params.set("brand", e.target.value);
     router.push(`${pathname}?${params.toString()}`);
@@ -74,6 +79,7 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
 
   function clearFilter() {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
     params.delete("filter");
     router.push(`${pathname}${params.toString() ? `?${params.toString()}` : ""}`);
   }

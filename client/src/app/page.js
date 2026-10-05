@@ -1,5 +1,6 @@
 import { serverFetch } from "@/lib/api";
 import { FALLBACK_CATEGORIES } from "@/data/constants";
+import { fetchAllProducts } from "@/lib/catalog";
 import HeroCarousel from "@/features/hero/HeroCarousel";
 import TrustBar from "@/components/TrustBar";
 import FeaturedCollections from "@/components/FeaturedCollections";
@@ -43,8 +44,11 @@ export default async function HomePage() {
   const categories = await getCategories();
 
   // Catalog is small (see productController's own "catalog is small" note),
-  // so one unpaginated fetch + client-side tally/ranking is both simpler and
-  // far less load than a separate request per section.
+  // so reading it whole + client-side tally/ranking is both simpler and far
+  // less load than a separate request per section. The API caps one request
+  // at 100 products, so fetchAllProducts reads further chunks once the
+  // catalogue outgrows that - otherwise the category counts and the hero
+  // picks would silently stop at the first 100.
   //
   // Best Sellers / New Arrivals are now driven by real admin-set flags
   // (isBestSeller / isNewArrival, checked per-product in the admin panel)
@@ -72,7 +76,7 @@ export default async function HomePage() {
     // default sort (createdAt: -1) - genuine "just added" order, no
     // invented "new" dates.
     getProducts({ sort: "newest", limit: "10" }),
-    getProducts({ limit: "100" }),
+    fetchAllProducts(),
     getProducts({ featured: "true", limit: "1" }),
   ]);
 
