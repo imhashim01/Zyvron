@@ -62,3 +62,11 @@ export const FALLBACK_CATEGORIES = Object.entries(CATEGORY_META).map(([slug, met
   icon: meta.icon,
   image: meta.image,
 }));
+
+// Products that must never be promoted in the homepage hero carousel. They
+// stay on sale everywhere else (catalogue, category pages, search, Best
+// Sellers...) - this only decides what the hero picks. To take another
+// product out of the hero rotation, add its slug (the last part of its
+// /product/<slug> address) here. The Great Wall CS10 mouse was removed from
+// the hero at the owner's request (its box photo did not suit the tile).
+export const HERO_EXCLUDED_SLUGS = ["great-wall-cs10-fashion-business-wired-mouse"];

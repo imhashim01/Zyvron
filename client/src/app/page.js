@@ -1,5 +1,5 @@
 import { serverFetch } from "@/lib/api";
-import { FALLBACK_CATEGORIES } from "@/data/constants";
+import { FALLBACK_CATEGORIES, HERO_EXCLUDED_SLUGS } from "@/data/constants";
 import { fetchAllProducts } from "@/lib/catalog";
 import HeroCarousel from "@/features/hero/HeroCarousel";
 import TrustBar from "@/components/TrustBar";
@@ -38,6 +38,30 @@ async function getProducts(params) {
 // homepage actively pushes.
 function inStock(product) {
   return (product.stock ?? 1) > 0;
+}
+
+// Best real product per category (rating, then reviewsCount, as tie-breakers).
+function topByCategory(products) {
+  const top = {};
+  for (const p of products) {
+    const slug = p.category?.slug;
+    if (!slug) continue;
+    const current = top[slug];
+    if (
+      !current ||
+      (p.rating || 0) > (current.rating || 0) ||
+      ((p.rating || 0) === (current.rating || 0) && (p.reviewsCount || 0) > (current.reviewsCount || 0))
+    ) {
+      top[slug] = p;
+    }
+  }
+  return top;
+}
+
+// Products listed in HERO_EXCLUDED_SLUGS (data/constants.js) are never put
+// in the hero carousel - they remain on sale everywhere else.
+function heroAllowed(product) {
+  return !HERO_EXCLUDED_SLUGS.includes(product.slug);
 }
 
 export default async function HomePage() {
@@ -97,24 +121,13 @@ export default async function HomePage() {
   const featuredProduct = featuredList.filter(inStock)[0] || null;
   const inStockActive = allActive.filter(inStock);
 
-  // Best real product per category (rating, then reviewsCount, as
-  // tie-breakers) - used for the hero, so it's never dominated by a
-  // single product/category, and for the lifestyle blocks below.
-  const topProductByCategory = {};
-  for (const p of inStockActive) {
-    const slug = p.category?.slug;
-    if (!slug) continue;
-    const current = topProductByCategory[slug];
-    if (
-      !current ||
-      (p.rating || 0) > (current.rating || 0) ||
-      ((p.rating || 0) === (current.rating || 0) && (p.reviewsCount || 0) > (current.reviewsCount || 0))
-    ) {
-      topProductByCategory[slug] = p;
-    }
-  }
-  const diversifiedHero = categories.map((cat) => topProductByCategory[cat.slug]).filter(Boolean);
-  const heroFallback = flashSaleInStock.length ? flashSaleInStock : bestSellersInStock;
+  // Best real product per category - used for the lifestyle blocks below, and
+  // (minus any product excluded from the hero) for the hero, so the hero is
+  // never dominated by a single product/category.
+  const topProductByCategory = topByCategory(inStockActive);
+  const heroTopByCategory = topByCategory(inStockActive.filter(heroAllowed));
+  const diversifiedHero = categories.map((cat) => heroTopByCategory[cat.slug]).filter(Boolean);
+  const heroFallback = (flashSaleInStock.length ? flashSaleInStock : bestSellersInStock).filter(heroAllowed);
   const heroSlides = (diversifiedHero.length ? diversifiedHero : heroFallback).slice(0, 6);
 
   return (
