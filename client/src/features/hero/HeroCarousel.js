@@ -25,6 +25,10 @@ export default function HeroCarousel({ slides }) {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
+    // Phones (below Tailwind's sm breakpoint) show the product photo as the
+    // hero background instead of the 3D tile (it's hidden there), so don't
+    // spin up WebGL for something nobody can see.
+    if (window.matchMedia("(max-width: 639px)").matches) return;
     try {
       const canvas = document.createElement("canvas");
       const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
@@ -104,23 +108,65 @@ export default function HeroCarousel({ slides }) {
         style={{ background: "radial-gradient(circle, rgba(0,229,255,0.13), transparent 70%)" }}
       />
 
-      <div className="relative grid gap-6 px-6 pb-8 pt-10 sm:gap-8 sm:px-10 sm:pt-14 lg:grid-cols-2 lg:items-center lg:gap-8 lg:pt-16">
-        <div className="text-center lg:text-left">
+      {/* Phones only (below sm): the active product's photo fills the top of
+          the card and fades into the card's dark background, with the text
+          sitting on the dark part below it - so the very first screen shows
+          something to buy instead of only a block of text (the small
+          product tile used to sit below the buttons, off-screen). The photo
+          never sits directly behind the headline, so it stays readable over
+          any picture. Only the active slide and its two neighbours are
+          mounted, so a swipe cross-fades without loading every slide's photo
+          up front. sm and up are untouched. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-[70%] sm:hidden"
+        style={{
+          // The photo itself fades out into whatever is behind it (the card's
+          // own background) - no colour band, so there is no visible edge
+          // where the photo ends and the text area begins.
+          WebkitMaskImage: "linear-gradient(to bottom, #000 35%, transparent 92%)",
+          maskImage: "linear-gradient(to bottom, #000 35%, transparent 92%)",
+        }}
+      >
+        {slides.map((slide, i) => {
+          const count = slides.length;
+          const near = i === activeIndex || i === (activeIndex + 1) % count || i === (activeIndex - 1 + count) % count;
+          if (!near) return null;
+          return (
+            <Image
+              key={slide._id}
+              src={slide.image}
+              alt=""
+              fill
+              sizes="100vw"
+              className={`object-cover transition-opacity duration-700 ${i === activeIndex ? "opacity-100" : "opacity-0"}`}
+              style={{ objectPosition: "center" }}
+            />
+          );
+        })}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, rgba(5,10,18,0.35) 0%, rgba(5,10,18,0) 22%)" }}
+        />
+      </div>
+
+      <div className="relative grid gap-6 px-6 pb-8 pt-10 max-sm:flex max-sm:min-h-[680px] max-sm:flex-col max-sm:justify-end max-sm:pb-6 max-sm:pt-8 sm:gap-8 sm:px-10 sm:pt-14 lg:grid-cols-2 lg:items-center lg:gap-8 lg:pt-16">
+        <div className="text-center max-sm:w-full max-sm:min-w-0 lg:text-left">
           {/* Constant brand header - the H1 is Zyvron's own headline, not a
               single product's title, so the hero reads as a brand statement
               rather than a rotating single-product ad. */}
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white max-sm:hidden"
             style={{ background: "linear-gradient(90deg, #00c6ff, #a855f7)" }}
           >
             NEXT-GEN TECH FOR EVERYDAY LIFE
           </span>
 
-          <h1 className="mt-5 font-heading text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-5 font-heading text-3xl font-black leading-[1.08] tracking-tight text-white max-sm:mt-0 max-sm:[text-shadow:0_2px_14px_rgba(0,0,0,0.65)] sm:text-5xl">
             Technology That Moves With You.
           </h1>
 
-          <p className="mx-auto mt-4 max-w-md text-sm text-[var(--text-secondary)] sm:text-base lg:mx-0">
+          <p className="mx-auto mt-4 hidden max-w-md text-sm text-[var(--text-secondary)] sm:block sm:text-base lg:mx-0">
             Discover premium audio, smart wearables, charging gear and everyday tech — delivered across
             Pakistan.
           </p>
@@ -144,7 +190,7 @@ export default function HeroCarousel({ slides }) {
             </Link>
             <a
               href="#explore-zyvron"
-              className="neon-cyan-hover rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95"
+              className="neon-cyan-hover rounded-2xl border border-white/20 px-6 py-3.5 text-sm font-bold text-white transition hover:border-cyan-400/60 hover:bg-white/5 active:scale-95 max-sm:hidden"
             >
               Explore Categories
             </a>
@@ -154,7 +200,7 @@ export default function HeroCarousel({ slides }) {
               beneath the constant brand header. Every slide's real copy
               stays in the DOM (server-rendered, crawlable); only the active
               one is visible. */}
-          <div className="mt-8 border-t border-white/10 pt-6 lg:mt-10">
+          <div className="mt-8 border-t border-white/10 pt-6 max-sm:mt-5 max-sm:pt-4 lg:mt-10">
             {slides.map((slide, i) => {
               const pct = discountPercent(slide.price, slide.compareAtPrice);
               return (
@@ -166,7 +212,7 @@ export default function HeroCarousel({ slides }) {
                       : "hidden"
                   }
                 >
-                  <div className="min-w-0 text-center sm:text-left">
+                  <div className="min-w-0 text-center max-sm:w-full sm:text-left">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-cyan-300">
                       {slide.badge || slide.category?.name || "Featured"}
                     </p>
@@ -176,7 +222,7 @@ export default function HeroCarousel({ slides }) {
                     >
                       {slide.title}
                     </Link>
-                    <div className="mt-1.5 flex items-center justify-center gap-3 sm:justify-start">
+                    <div className="mt-1.5 flex items-center justify-center gap-3 max-sm:hidden sm:justify-start">
                       <StarRating rating={slide.rating} count={slide.reviewsCount} />
                     </div>
                     <div className="mt-1.5 flex items-center justify-center gap-2 sm:justify-start">
@@ -202,7 +248,7 @@ export default function HeroCarousel({ slides }) {
           </div>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[220px] items-center justify-center py-2 sm:max-w-xs sm:py-3 md:max-w-sm md:py-4 lg:max-w-none lg:py-0">
+        <div className="relative mx-auto flex w-full max-w-[220px] items-center justify-center py-2 max-sm:hidden sm:max-w-xs sm:py-3 md:max-w-sm md:py-4 lg:max-w-none lg:py-0">
           {/* Scaled down on small screens on purpose - at the old fixed
               max-w-[380px] this circle ate the entire viewport height on a
               phone, pushing the price/CTA out of view and making the hero
