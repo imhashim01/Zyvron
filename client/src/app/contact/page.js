@@ -1,6 +1,7 @@
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import CategoryIcon from "@/components/CategoryIcon";
 import { SITE_NAME, SUPPORT_EMAIL, WHATSAPP_URL, WHATSAPP_NUMBER } from "@/data/constants";
 
 export const metadata = {
@@ -8,7 +9,7 @@ export const metadata = {
   description: `Get in touch with ${SITE_NAME} over WhatsApp or email.`,
 };
 
-const WHATSAPP_DISPLAY = `0${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5)}`;
+const WHATSAPP_DISPLAY = `+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5)}`;
 
 export default function ContactPage() {
   return (
@@ -22,8 +23,8 @@ export default function ContactPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="flex flex-col items-start gap-3 p-6">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/15 text-2xl">
-            💬
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
+            <CategoryIcon name="chat" className="h-5 w-5" />
           </span>
           <div>
             <h2 className="font-heading text-base font-bold text-white">WhatsApp</h2>
@@ -37,8 +38,8 @@ export default function ContactPage() {
         </Card>
 
         <Card className="flex flex-col items-start gap-3 p-6">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/15 text-2xl">
-            ✉️
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-300">
+            <CategoryIcon name="mail" className="h-5 w-5" />
           </span>
           <div>
             <h2 className="font-heading text-base font-bold text-white">Email</h2>

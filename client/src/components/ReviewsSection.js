@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiJson } from "@/lib/api";
 import StarRating from "./StarRating";
+import CategoryIcon from "./CategoryIcon";
 
 function getVoterKey() {
   if (typeof window === "undefined") return "";
@@ -139,9 +140,10 @@ export default function ReviewsSection({ productId }) {
               <button
                 onClick={() => markHelpful(r._id)}
                 disabled={votedIds.includes(r._id)}
-                className="mt-2 text-xs font-semibold text-cyan-300 hover:underline disabled:cursor-not-allowed disabled:text-white/30"
+                className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-300 hover:underline disabled:cursor-not-allowed disabled:text-white/30"
               >
-                👍 Helpful ({r.helpfulCount || 0})
+                <CategoryIcon name="thumbs-up" className="h-3.5 w-3.5" />
+                Helpful ({r.helpfulCount || 0})
               </button>
             </div>
           ))}

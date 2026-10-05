@@ -5,6 +5,7 @@ import { useState } from "react";
 import { apiJson } from "@/lib/api";
 import { useCart } from "@/store/cartContext";
 import { formatPKR } from "@/lib/format";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const inputClass =
   "w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-cyan-400";
@@ -102,7 +103,9 @@ export default function CheckoutPage() {
   if (order) {
     return (
       <div className="mx-auto max-w-xl px-4 py-20 text-center sm:px-6">
-        <div className="mb-4 text-5xl">🎉</div>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
+          <CategoryIcon name="check-circle" className="h-9 w-9" />
+        </div>
         <h1 className="mb-2 font-heading text-2xl font-bold text-white">Order Placed!</h1>
         <p className="mb-4 text-white/60">
           Your tracking number is{" "}

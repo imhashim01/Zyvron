@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/store/cartContext";
 import { CATEGORY_GROUPS } from "@/data/constants";
+import CategoryIcon from "./CategoryIcon";
 
 const SORTS = [
   { value: "popular", label: "Most Popular" },
@@ -17,9 +18,9 @@ const SORTS = [
 // (?filter=flash/bestseller/new) - shown as a clearable pill so it's
 // obvious the filter actually applied, not just guessed at.
 const FILTER_LABELS = {
-  flash: "⚡ Flash Deals",
-  bestseller: "🔥 Best Sellers",
-  new: "✨ New Arrivals",
+  flash: "Flash Deals",
+  bestseller: "Best Sellers",
+  new: "New Arrivals",
 };
 
 export default function CategoryFilters({ categories = [], brands = [], currentSlug = "all" }) {
@@ -97,11 +98,12 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
 
         <button
           onClick={() => goto("all", { filter: "wishlist" })}
-          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition sm:self-auto ${
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold transition sm:self-auto ${
             isWishlist ? "bg-cyan-400 text-black" : "bg-[var(--surface-card)] text-[var(--text-secondary)] hover:bg-white/10"
           }`}
         >
-          ♥ Wishlist ({wishlist.length})
+          <CategoryIcon name="heart" className="h-3.5 w-3.5" />
+          Wishlist ({wishlist.length})
         </button>
       </div>
 

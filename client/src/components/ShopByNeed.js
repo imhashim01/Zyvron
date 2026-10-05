@@ -8,18 +8,18 @@ import CategoryIcon from "./CategoryIcon";
 // nothing here can silently hide a real category or invent one that doesn't
 // exist in the catalog.
 const NEED_MATCHERS = [
-  { test: /audio|speaker|earbud|headphone/i, emoji: "🎧", label: "For Music" },
-  { test: /gaming|pc/i, emoji: "🎮", label: "For Gaming" },
-  { test: /wearable|watch/i, emoji: "⌚", label: "For Your Lifestyle" },
-  { test: /mobile|phone/i, emoji: "📱", label: "For Your Phone" },
-  { test: /power|charg|cable/i, emoji: "⚡", label: "For Power" },
+  { test: /audio|speaker|earbud|headphone/i, icon: "headphones", label: "For Music" },
+  { test: /gaming|pc/i, icon: "gamepad", label: "For Gaming" },
+  { test: /wearable|watch/i, icon: "watch", label: "For Your Lifestyle" },
+  { test: /mobile|phone/i, icon: "phone", label: "For Your Phone" },
+  { test: /power|charg|cable/i, icon: "bolt", label: "For Power" },
 ];
 
 function frameCategory(category) {
   const haystack = `${category.name || ""} ${category.slug || ""}`;
   const match = NEED_MATCHERS.find((m) => m.test.test(haystack));
-  if (match) return { emoji: match.emoji, label: match.label };
-  return { emoji: "🛠️", label: `For ${category.name}` };
+  if (match) return { icon: match.icon, label: match.label };
+  return { icon: "wrench", label: `For ${category.name}` };
 }
 
 /**
@@ -42,7 +42,7 @@ export default function ShopByNeed({ categories, counts = {} }) {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {withStock.map((cat, i) => {
-          const { emoji, label } = frameCategory(cat);
+          const { icon, label } = frameCategory(cat);
           const count = counts[cat.slug] ?? 0;
           return (
             <Link
@@ -51,9 +51,7 @@ export default function ShopByNeed({ categories, counts = {} }) {
               className="stagger-item group flex flex-col gap-2 rounded-2xl border border-white/[0.12] bg-[var(--surface-card)] p-5 transition hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-[var(--surface-2)]"
               style={{ "--stagger-delay": `${i * 70}ms` }}
             >
-              <span className="text-2xl" aria-hidden="true">
-                {emoji}
-              </span>
+              <CategoryIcon name={icon} className="h-7 w-7 text-cyan-300" />
               <span className="font-heading text-sm font-bold text-white">{label}</span>
               <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                 <CategoryIcon name={cat.icon} className="h-3.5 w-3.5" />

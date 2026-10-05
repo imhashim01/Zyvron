@@ -17,7 +17,7 @@ export default function NewArrivals({ products }) {
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h2 className="font-heading text-xl font-bold text-white">
-            ✨ New <span className="text-cyan-400">Arrivals</span>
+            New <span className="text-cyan-400">Arrivals</span>
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">Fresh tech. Just landed.</p>
         </div>

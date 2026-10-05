@@ -13,7 +13,7 @@ export default function FreeShippingBar() {
     <div className="mb-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <p className="mb-2 text-sm text-white/70">
         {isFreeShipping && checkoutSubtotal > 0 ? (
-          <span className="font-semibold text-emerald-400">You&apos;ve unlocked free shipping! 🎉</span>
+          <span className="font-semibold text-emerald-400">You&apos;ve unlocked free shipping!</span>
         ) : (
           <>
             Add <span className="font-semibold text-cyan-300">{formatPKR(freeShippingRemaining)}</span> more

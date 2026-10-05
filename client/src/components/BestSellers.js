@@ -17,7 +17,7 @@ export default function BestSellers({ products }) {
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h2 className="font-heading text-xl font-bold text-white">
-            🔥 Best <span className="text-cyan-400">Sellers</span>
+            Best <span className="text-cyan-400">Sellers</span>
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
             The tech everyone&apos;s adding to their setup.

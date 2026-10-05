@@ -8,20 +8,20 @@ const CATEGORY_LINKS = [
   { href: "/category/smart-wearables", label: "Smart Wearables" },
   { href: "/category/gaming-and-pc-accessories", label: "Gaming & PC" },
   { href: "/category/mobile-accessories", label: "Mobile Accessories" },
-  { href: "/category/all?filter=flash", label: "⚡ Flash Deals" },
+  { href: "/category/all?filter=flash", label: "Flash Deals" },
 ];
 
 const SUPPORT_LINKS = [
-  { href: "/track-order", label: "🚚 Track My Order" },
-  { href: "/about", label: "📖 About Us" },
-  { href: "/contact", label: "📩 Contact Us" },
-  { href: "/faq", label: "❓ FAQ" },
-  { href: "/shipping-delivery", label: "📦 Shipping & Delivery" },
-  { href: "/warranty-support", label: "🛡️ Warranty & Support" },
-  { href: "/blog", label: "📰 Tech Tips Blog" },
+  { href: "/track-order", label: "Track My Order" },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact Us" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/shipping-delivery", label: "Shipping & Delivery" },
+  { href: "/warranty-support", label: "Warranty & Support" },
+  { href: "/blog", label: "Tech Tips Blog" },
 ];
 
-const WHATSAPP_DISPLAY = `0${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5)}`;
+const WHATSAPP_DISPLAY = `+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5)}`;
 
 export default function Footer() {
   return (
@@ -76,12 +76,12 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="hover:text-cyan-300"
               >
-                💬 WhatsApp: {WHATSAPP_DISPLAY}
+                WhatsApp: {WHATSAPP_DISPLAY}
               </a>
             </li>
             <li>
               <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-cyan-300">
-                ✉️ {SUPPORT_EMAIL}
+                {SUPPORT_EMAIL}
               </a>
             </li>
           </ul>

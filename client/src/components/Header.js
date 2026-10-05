@@ -15,10 +15,10 @@ const NAV_LINKS = [
   { href: "/category/audio-and-speakers", label: "Audio & Speakers" },
   { href: "/category/earbuds", label: "Earbuds" },
   { href: "/category/gaming-and-vlogging", label: "Gaming & Vlogging Accessories" },
-  { href: "/category/all?filter=flash", label: "⚡ Flash Sale", accent: true },
+  { href: "/category/all?filter=flash", label: "Flash Sale", accent: true },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/track-order", label: "📦 Track Order" },
+  { href: "/track-order", label: "Track Order" },
 ];
 
 function SearchIcon() {

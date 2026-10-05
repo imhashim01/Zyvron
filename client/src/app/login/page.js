@@ -7,12 +7,13 @@ import { useAuth } from "@/store/authContext";
 import { Input } from "@/components/ui/Input";
 import Logo from "@/components/ui/Logo";
 import Reveal from "@/animations/Reveal";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const TRUST_POINTS = [
-  { icon: "🚚", text: "Free delivery over Rs. 3,000" },
-  { icon: "💵", text: "Cash on delivery, nationwide" },
-  { icon: "🛡️", text: "7-day replacement warranty" },
-  { icon: "📦", text: "Live order tracking" },
+  { icon: "truck", text: "Free delivery over Rs. 3,000" },
+  { icon: "cash", text: "Cash on delivery, nationwide" },
+  { icon: "shield", text: "7-day replacement warranty" },
+  { icon: "box", text: "Live order tracking" },
 ];
 
 function MailIcon() {
@@ -138,9 +139,7 @@ export default function LoginPage() {
                   key={point.text}
                   className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/75"
                 >
-                  <span aria-hidden="true" className="text-lg">
-                    {point.icon}
-                  </span>
+                  <CategoryIcon name={point.icon} className="h-5 w-5 shrink-0 text-cyan-300" />
                   {point.text}
                 </li>
               ))}
@@ -199,7 +198,7 @@ export default function LoginPage() {
 
               {error && (
                 <div className="flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-300">
-                  <span aria-hidden="true">⚠️</span>
+                  <CategoryIcon name="warning" className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>{error}</span>
                 </div>
               )}

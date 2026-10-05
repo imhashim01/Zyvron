@@ -5,7 +5,7 @@ export const SHIPPING_FEE = 199;
 
 // Support WhatsApp number (Pakistan), in wa.me's required international
 // format: no leading 0, no "+", country code prepended.
-export const WHATSAPP_NUMBER = "923362345622";
+export const WHATSAPP_NUMBER = "923037619047";
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 export const SUPPORT_EMAIL = "zyvron.official@gmail.com";
 

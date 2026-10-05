@@ -1,25 +1,26 @@
 import Link from "next/link";
+import CategoryIcon from "./CategoryIcon";
 import { FREE_SHIPPING_THRESHOLD } from "@/data/constants";
 
 const ITEMS = [
   {
-    icon: "🚚",
+    icon: "truck",
     title: `Free Delivery Over Rs. ${FREE_SHIPPING_THRESHOLD.toLocaleString()}`,
     sub: "Nationwide across Pakistan",
   },
   {
-    icon: "💵",
+    icon: "cash",
     title: "Cash on Delivery",
     sub: "Pay when it arrives - no online payment",
   },
   {
-    icon: "🛡️",
+    icon: "shield",
     title: "7-Day Replacement Warranty",
     sub: "On manufacturing defects",
     href: "/warranty-support",
   },
   {
-    icon: "📦",
+    icon: "box",
     title: "Track Every Order",
     sub: "Live status, any time",
     href: "/track-order",
@@ -38,7 +39,7 @@ export default function TrustBar() {
               {...(item.href ? { href: item.href } : {})}
               className="flex items-center gap-3 rounded-2xl border border-white/[0.12] bg-[var(--surface-card)] px-4 py-3 transition hover:border-cyan-400/30"
             >
-              <span className="text-xl">{item.icon}</span>
+              <CategoryIcon name={item.icon} className="h-6 w-6 shrink-0 text-cyan-300" />
               <span className="min-w-0">
                 <span className="block truncate text-xs font-bold text-white sm:text-sm">
                   {item.title}

@@ -1,6 +1,7 @@
 import NewsletterForm from "./NewsletterForm";
 import { WHATSAPP_URL } from "@/data/constants";
 import Reveal from "@/animations/Reveal";
+import CategoryIcon from "./CategoryIcon";
 
 /**
  * Homepage-only CTA band before the footer. Reuses the existing
@@ -34,7 +35,7 @@ export default function NewsletterWhatsAppCTA() {
             rel="noopener noreferrer"
             className="neon-cyan-hover inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2 text-sm font-bold text-white transition hover:border-cyan-400/50 hover:bg-white/5"
           >
-            <span aria-hidden="true">💬</span> Chat with us on WhatsApp
+            <CategoryIcon name="chat" className="h-4 w-4" /> Chat with us on WhatsApp
           </a>
         </div>
       </div>

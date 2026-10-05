@@ -113,7 +113,7 @@ export default function HeroCarousel({ slides }) {
             className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-wide text-white"
             style={{ background: "linear-gradient(90deg, #00c6ff, #a855f7)" }}
           >
-            <span aria-hidden="true">⚡</span> NEXT-GEN TECH FOR EVERYDAY LIFE
+            NEXT-GEN TECH FOR EVERYDAY LIFE
           </span>
 
           <h1 className="mt-5 font-heading text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl">
