@@ -10,7 +10,7 @@ import Reveal from "@/animations/Reveal";
 import CategoryIcon from "@/components/CategoryIcon";
 
 const TRUST_POINTS = [
-  { icon: "truck", text: "Free delivery over Rs. 3,000" },
+  { icon: "truck", text: "Free delivery all over Pakistan" },
   { icon: "cash", text: "Cash on delivery, nationwide" },
   { icon: "shield", text: "7-day replacement warranty" },
   { icon: "box", text: "Live order tracking" },

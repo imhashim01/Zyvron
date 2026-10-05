@@ -2941,7 +2941,7 @@ class App {
       store.currentView = 'shipping';
       store.activeModal = null;
       document.title = 'Shipping & Delivery — Zyvron Tech Accessories';
-      this.setMetaDescription('Zyvron shipping & delivery info: 2-4 working day nationwide delivery across Pakistan, free shipping over Rs. 3,000, and Cash on Delivery.');
+      this.setMetaDescription('Zyvron shipping & delivery info: 2-4 working day nationwide delivery across Pakistan, free shipping all over Pakistan, and Cash on Delivery.');
       store.notify();
       if (!isInitialLoad) window.scrollTo({ top: 0, behavior: 'auto' });
       return;
@@ -3018,7 +3018,7 @@ class App {
       document.title = cat ? `${cat.name} — Zyvron Tech Accessories` : 'Zyvron Tech Accessories™ — Premium Gadgets & Smart Tech Store';
       this.setMetaDescription(cat
         ? `Shop ${cat.name} at Zyvron — premium tech accessories with cash on delivery and free nationwide shipping across Pakistan.`
-        : 'Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free nationwide shipping on orders over Rs. 3,000.');
+        : 'Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free nationwide shipping all over Pakistan.');
       store.notify();
       // FIX: land at the true top of the category page (title + filter
       // chips visible), instantly, with no scroll animation. Previously
@@ -3067,7 +3067,7 @@ class App {
       store.activeCategory = 'all';
     }
     document.title = 'Zyvron Tech Accessories™ — Premium Gadgets & Smart Tech Store';
-    this.setMetaDescription('Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free nationwide shipping on orders over Rs. 3,000.');
+    this.setMetaDescription('Shop premium wireless audio, smartwatches, gaming gear & smart mobile accessories in Pakistan. Cash on delivery & free nationwide shipping all over Pakistan.');
     store.notify();
     // Do not force the page back to the top when the user returns Home.
     // On storefront navigation, a plain home route should simply restore the
@@ -3312,7 +3312,7 @@ class App {
           <div class="animate-marquee whitespace-nowrap flex items-center gap-8">
             <span class="flex items-center gap-1.5"><span class="text-red-500">⚡</span> WELCOME TO ZYVRON TECH ACCESSORIES STORE</span>
             <span class="text-red-500">•</span>
-            <span class="flex items-center gap-1.5"><span class="text-red-500">🚚</span> FREE DELIVERY OVER RS. 3,000 NATIONWIDE</span>
+            <span class="flex items-center gap-1.5"><span class="text-red-500">🚚</span> FREE DELIVERY ALL OVER PAKISTAN</span>
             <span class="text-red-500">•</span>
             <span class="flex items-center gap-1.5"><span class="text-red-500">💵</span> CASH ON DELIVERY (COD) AVAILABLE</span>
             <span class="text-red-500">•</span>
@@ -3322,7 +3322,7 @@ class App {
             <span class="text-red-500">•</span>
             <span class="flex items-center gap-1.5"><span class="text-red-500">⚡</span> WELCOME TO ZYVRON TECH ACCESSORIES STORE</span>
             <span class="text-red-500">•</span>
-            <span class="flex items-center gap-1.5"><span class="text-red-500">🚚</span> FREE DELIVERY OVER RS. 3,000 NATIONWIDE</span>
+            <span class="flex items-center gap-1.5"><span class="text-red-500">🚚</span> FREE DELIVERY ALL OVER PAKISTAN</span>
             <span class="text-red-500">•</span>
             <span class="flex items-center gap-1.5"><span class="text-red-500">💵</span> CASH ON DELIVERY (COD) AVAILABLE</span>
             <span class="text-red-500">•</span>
@@ -3388,9 +3388,9 @@ class App {
                 <button class="nav-link whitespace-nowrap hover:text-white transition py-1 flex items-center gap-1" onclick="app.openTrackingPage()">
                   🚚 Track Order
                 </button>
-                <div class="zv-nav-delivery-pill" aria-label="Free delivery over Rs. 3,000">
+                <div class="zv-nav-delivery-pill" aria-label="Free delivery all over Pakistan">
                   <span class="zv-nav-delivery-icon" aria-hidden="true">✦</span>
-                  <span><strong>FREE DELIVERY OVER RS. 3,000</strong><small>Nationwide • Fast &amp; Reliable</small></span>
+                  <span><strong>FREE DELIVERY ALL OVER PAKISTAN</strong><small>Nationwide • Fast &amp; Reliable</small></span>
                 </div>
               </div>
 
@@ -5208,7 +5208,7 @@ class App {
 
           <div class="zv-about-cta">
             <h2>Ready to Upgrade Your Tech?</h2>
-            <p>Browse the full catalog and get free delivery on orders over Rs. 3,000.</p>
+            <p>Browse the full catalog and get free delivery all over Pakistan.</p>
             <button onclick="app.goToCategory('all')">
               Shop All Products →
             </button>
@@ -5559,7 +5559,7 @@ class App {
         <p>Most orders arrive within 2–4 working days, nationwide across Pakistan. You'll get a tracking code right after checkout so you can follow your order's status any time.</p>
       `),
       s('Is shipping really free?', `
-        <p>Yes — orders over Rs. 3,000 ship free. Orders under Rs. 3,000 have a flat delivery fee of Rs. 199, shown clearly at checkout before you confirm.</p>
+        <p>Yes — orders  ship free. </p>
       `),
       s('Can I open and check my order before paying?', `
         <p>Yes. Since it's Cash on Delivery, you're welcome to inspect the package at your doorstep before paying the rider. If something's wrong, damaged, or not what you ordered, you can refuse it on the spot at no cost.</p>
@@ -5603,7 +5603,7 @@ class App {
       `),
       s('3. Shipping Charges', `
         <ul class="list-disc pl-5 space-y-1">
-          <li>Orders over Rs. 3,000: <strong>FREE</strong> delivery.</li>
+          <li>Orders : <strong>FREE</strong> delivery.</li>
           <li>Orders under Rs. 3,000: a flat delivery fee of Rs. 199, shown at checkout before you confirm.</li>
         </ul>
       `),

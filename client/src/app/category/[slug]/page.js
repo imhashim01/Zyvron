@@ -44,7 +44,7 @@ export async function generateMetadata({ params, searchParams }) {
   const pageSuffix = pageNumber > 1 ? `?page=${pageNumber}` : "";
   return {
     title: pageNumber > 1 ? `${name} - Page ${pageNumber}` : name,
-    description: `Shop ${name} at Zyvron Tech Accessories — premium quality, cash on delivery, free shipping over Rs. 3,000.`,
+    description: `Shop ${name} at Zyvron Tech Accessories — premium quality, cash on delivery, free shipping all over Pakistan.`,
     alternates: { canonical: `${SITE_URL}/category/${slug}${pageSuffix}` },
   };
 }
