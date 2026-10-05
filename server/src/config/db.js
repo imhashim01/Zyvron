@@ -24,7 +24,11 @@ async function connectDB() {
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     try {
-      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
+      await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 8000,
+        maxPoolSize: 5,
+        maxIdleTimeMS: 10000,
+      });
       console.log(`[db] MongoDB connected -> ${mongoose.connection.name}`);
       return;
     } catch (err) {
