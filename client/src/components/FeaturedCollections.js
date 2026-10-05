@@ -7,7 +7,7 @@ function CollectionCard({ href, image, name, tagline, count }) {
   return (
     <Link
       href={href}
-      className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:shadow-[0_18px_40px_rgba(0,217,255,0.18)]"
+      className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/50 hover:shadow-[0_18px_40px_rgba(0,217,255,0.18)] max-sm:aspect-square"
     >
       {image ? (
         <Image
@@ -45,12 +45,28 @@ function CollectionCard({ href, image, name, tagline, count }) {
         className="absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
         style={{ boxShadow: "inset 0 0 0 1px rgba(0,229,255,0.5)" }}
       />
-      <div className="absolute inset-x-0 bottom-0 p-4">
-        <h3 className="font-heading text-base font-bold text-white">{name}</h3>
-        <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+      {/* The text block carries its own dark backing, so it is always as tall
+          as the words on it - whatever the photo behind is (a near-white
+          speaker shot, a busy product box, a purple phone) and however many
+          lines a long name or tagline wraps to. The full-card fade above can
+          only guess where the text will land, which is why light and busy
+          photos used to wash the words out. */}
+      <div
+        className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-14 sm:p-4 sm:pt-12"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(4,8,15,0.96) 0%, rgba(4,8,15,0.9) 50%, rgba(4,8,15,0.55) 80%, transparent 100%)",
+        }}
+      >
+        <h3 className="font-heading text-sm font-bold leading-snug text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.75)] sm:text-base">
+          {name}
+        </h3>
+        <p className="mt-0.5 text-[11px] leading-snug text-[var(--text-secondary)] [text-shadow:0_1px_6px_rgba(0,0,0,0.75)] sm:text-xs">
           {tagline || `${count} Item${count === 1 ? "" : "s"}`}
         </p>
-        <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-300 opacity-0 transition duration-300 group-hover:opacity-100">
+        {/* Hover hint: invisible until hover, so on touch screens it only
+            ever took up empty space (pushing the text up) - hidden there. */}
+        <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-300 opacity-0 transition duration-300 group-hover:opacity-100 max-sm:hidden">
           Explore →
         </span>
       </div>

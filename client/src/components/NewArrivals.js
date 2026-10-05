@@ -29,7 +29,11 @@ export default function NewArrivals({ products }) {
         </Link>
       </div>
 
-      <Slider label="new arrivals">
+      {/* autoplay: same hands-off slide as Best Sellers and Flash Deals (pauses on
+          hover / focus / touch, never runs for reduced-motion visitors). A
+          slightly different interval keeps the two rows from moving in
+          lockstep. */}
+      <Slider label="new arrivals" autoplay autoplayMs={4200}>
         {products.map((p, i) => (
           <div
             key={p._id}
