@@ -47,6 +47,8 @@ export default function AdminProductsPage() {
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [restartingFlash, setRestartingFlash] = useState(false);
+  const [notice, setNotice] = useState("");
   const fileInputRef = useRef(null);
 
   async function load() {
@@ -178,6 +180,47 @@ export default function AdminProductsPage() {
     }
   }
 
+  // Gives every Flash Sale product the same real deadline, `hours` from now,
+  // so the homepage "Hurry! Ends in" countdown reads exactly that long. The
+  // countdown always follows the saved Flash Sale end date (the soonest one
+  // wins) - this just sets that date on all of them in one go instead of
+  // editing each product by hand. Only the end date is sent (every other
+  // field on the update endpoint is optional), so nothing else changes.
+  const flashProducts = products.filter((p) => p.isFlashSale);
+
+  async function restartFlashSales(hours = 24) {
+    if (!flashProducts.length) return;
+    if (
+      !confirm(
+        `Set the flash-sale timer on all ${flashProducts.length} flash-sale products to end ${hours} hours from now?`
+      )
+    )
+      return;
+    setRestartingFlash(true);
+    setError("");
+    setNotice("");
+    const endsAt = new Date(Date.now() + hours * 3600 * 1000).toISOString();
+    let failed = 0;
+    // A few at a time - gentle on the API's rate limit.
+    for (let i = 0; i < flashProducts.length; i += 5) {
+      const results = await Promise.allSettled(
+        flashProducts.slice(i, i + 5).map((p) =>
+          apiJson(`/products/${p._id}`, { method: "PUT", body: JSON.stringify({ flashSaleEndsAt: endsAt }) })
+        )
+      );
+      failed += results.filter((r) => r.status === "rejected").length;
+    }
+    setRestartingFlash(false);
+    if (failed) {
+      setError(`${failed} of ${flashProducts.length} products could not be updated - try again.`);
+    } else {
+      setNotice(
+        `Flash sale timer set to ${hours} hours on ${flashProducts.length} products. The homepage updates within about a minute.`
+      );
+    }
+    load();
+  }
+
   async function onDelete(id) {
     if (!confirm("Permanently delete this product? This removes it from the database and cannot be undone.")) return;
     try {
@@ -194,15 +237,28 @@ export default function AdminProductsPage() {
         <h2 className="font-heading text-lg font-bold text-white">
           Products ({products.length})
         </h2>
-        <button
-          onClick={startAdd}
-          className="rounded-full bg-cyan-400 px-4 py-2 text-sm font-bold text-black hover:bg-cyan-300"
-        >
-          + Add Product
-        </button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {flashProducts.length > 0 && (
+            <button
+              onClick={() => restartFlashSales(24)}
+              disabled={restartingFlash}
+              title="Sets the end date of every flash-sale product to 24 hours from now"
+              className="rounded-full border border-cyan-400/40 px-4 py-2 text-sm font-semibold text-cyan-300 hover:bg-cyan-400/10 disabled:opacity-50"
+            >
+              {restartingFlash ? "Updating timer…" : `Set flash timer to 24h (${flashProducts.length})`}
+            </button>
+          )}
+          <button
+            onClick={startAdd}
+            className="rounded-full bg-cyan-400 px-4 py-2 text-sm font-bold text-black hover:bg-cyan-300"
+          >
+            + Add Product
+          </button>
+        </div>
       </div>
 
       {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+      {notice && <p className="mb-4 text-sm text-emerald-300">{notice}</p>}
 
       {showForm && (
         <form onSubmit={onSubmit} className="mb-6 grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2">

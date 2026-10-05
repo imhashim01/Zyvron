@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import FloatingActions from "@/components/FloatingActions";
+import MetaPixel from "@/components/MetaPixel";
 import { serverFetch } from "@/lib/api";
 import { SITE_NAME, SITE_URL } from "@/data/constants";
 
@@ -73,6 +74,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${grotesk.variable}`}>
       <body className="flex min-h-screen flex-col bg-[var(--background)] text-white antialiased">
+        <MetaPixel />
         <JsonLd data={orgJsonLd} />
         <JsonLd data={siteJsonLd} />
         <Providers>

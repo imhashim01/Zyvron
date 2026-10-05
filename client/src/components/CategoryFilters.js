@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/store/cartContext";
 import { CATEGORY_GROUPS } from "@/data/constants";
 import CategoryIcon from "./CategoryIcon";
+import { trackEvent } from "@/lib/metaPixel";
 
 const SORTS = [
   { value: "newest", label: "Newest" },
@@ -34,6 +35,13 @@ export default function CategoryFilters({ categories = [], brands = [], currentS
   const activeFilter = searchParams.get("filter");
   const isWishlist = activeFilter === "wishlist";
   const activeFilterLabel = FILTER_LABELS[activeFilter];
+
+  // Both the header search box and this page's own search land here with
+  // ?search=, so this one effect reports every product search to Meta.
+  const searchTerm = searchParams.get("search");
+  useEffect(() => {
+    if (searchTerm) trackEvent("Search", { search_string: searchTerm });
+  }, [searchTerm]);
 
   function goto(slug, extra = {}) {
     const params = new URLSearchParams(searchParams.toString());

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { apiJson } from "@/lib/api";
 import { useCart } from "@/store/cartContext";
 import { formatPKR } from "@/lib/format";
 import CategoryIcon from "@/components/CategoryIcon";
+import { CURRENCY, lineItemsPayload, trackEvent } from "@/lib/metaPixel";
 
 const inputClass =
   "w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-cyan-400";
@@ -98,6 +99,15 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [order, setOrder] = useState(null);
 
+  // InitiateCheckout once per visit to this page, as soon as the cart (or
+  // Buy Now item) has loaded from storage - not again on every re-render.
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (!hydrated || checkoutTracked.current || checkoutItems.length === 0) return;
+    checkoutTracked.current = true;
+    trackEvent("InitiateCheckout", lineItemsPayload(checkoutItems));
+  }, [hydrated, checkoutItems]);
+
   if (!hydrated) return null;
 
   if (order) {
@@ -181,6 +191,7 @@ export default function CheckoutPage() {
       setError("Please enter a valid phone number, e.g. 03XXXXXXXXX.");
       return;
     }
+    trackEvent("AddPaymentInfo", lineItemsPayload(checkoutItems));
     goToStep("payment");
   }
 
@@ -199,7 +210,28 @@ export default function CheckoutPage() {
         couponCode: couponResult?.valid ? coupon.trim() : undefined,
       };
       const data = await apiJson("/orders", { method: "POST", body: JSON.stringify(payload) });
-      setOrder(data.order || data);
+      const placed = data.order || data;
+      // Reported from the server's own order (its prices, discount and
+      // total), not the cart's possibly-stale copy. The order number doubles
+      // as Meta's eventID, so the same purchase can never be counted twice.
+      trackEvent(
+        "Purchase",
+        {
+          value: placed.total,
+          currency: CURRENCY,
+          content_type: "product",
+          content_ids: (placed.items || []).map((i) => String(i.product)),
+          contents: (placed.items || []).map((i) => ({
+            id: String(i.product),
+            quantity: i.quantity,
+            item_price: i.price,
+          })),
+          num_items: (placed.items || []).reduce((sum, i) => sum + i.quantity, 0),
+          order_id: placed.orderNumber,
+        },
+        placed.orderNumber
+      );
+      setOrder(placed);
       if (buyNowItem) clearBuyNow();
       else clearCart();
     } catch (err) {

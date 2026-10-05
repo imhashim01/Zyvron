@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/store/authContext";
+import { trackEvent } from "@/lib/metaPixel";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -18,6 +19,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(form);
+      trackEvent("CompleteRegistration", { status: true });
       router.push("/account");
     } catch (err) {
       setError(err.message || "Couldn't create your account.");

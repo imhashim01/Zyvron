@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { apiJson } from "@/lib/api";
+import { trackEvent } from "@/lib/metaPixel";
 
 export default function NewsletterForm() {
   const [phone, setPhone] = useState("");
@@ -21,6 +22,7 @@ export default function NewsletterForm() {
       });
       setStatus("success");
       setPhone("");
+      trackEvent("Lead", { content_name: "Flash sale SMS alerts" });
     } catch {
       setStatus("error");
     }

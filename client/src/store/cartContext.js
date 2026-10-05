@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { apiJson } from "@/lib/api";
 import { useAuth } from "./authContext";
 import { SHIPPING_FEE } from "@/data/constants";
+import { CURRENCY, productPayload, trackEvent } from "@/lib/metaPixel";
 
 const CartContext = createContext(null);
 const CART_KEY = "zyvron_cart";
@@ -166,6 +167,7 @@ export function CartProvider({ children }) {
   }, [wishlist, hydrated, user?.id, ownerId]);
 
   const addToCart = useCallback((product, quantity = 1) => {
+    trackEvent("AddToCart", productPayload(product, quantity));
     setCart((prev) => {
       const idx = prev.findIndex((item) => item.product._id === product._id);
       if (idx >= 0) {
@@ -191,13 +193,24 @@ export function CartProvider({ children }) {
 
   const clearCart = useCallback(() => setCart([]), []);
 
-  const toggleWishlist = useCallback((productId) => {
-    setWishlist((prev) =>
-      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
-    );
-  }, []);
+  const toggleWishlist = useCallback(
+    (productId) => {
+      // Only adding is a Meta event - removing has no standard equivalent.
+      if (!wishlist.includes(productId)) {
+        trackEvent("AddToWishlist", { content_type: "product", content_ids: [productId], currency: CURRENCY });
+      }
+      setWishlist((prev) =>
+        prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
+      );
+    },
+    [wishlist]
+  );
 
+  // Buy Now skips the cart but is still the shopper adding this item to
+  // their order, so it reports AddToCart too (checkout then fires
+  // InitiateCheckout as usual).
   const startBuyNow = useCallback((product, quantity = 1) => {
+    trackEvent("AddToCart", productPayload(product, quantity));
     setBuyNowItem({ product, quantity });
   }, []);
 

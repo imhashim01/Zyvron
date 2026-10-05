@@ -22,7 +22,11 @@ const SECTIONS = [
   },
   {
     title: "Cookies & Local Storage",
-    body: "We use a secure sign-in cookie to keep you logged in, and your browser's local storage to remember your cart and wishlist. These are needed for the site to work and are not used for advertising.",
+    body: "We use a secure sign-in cookie to keep you logged in, and your browser's local storage to remember your cart and wishlist - these are needed for the site to work.",
+  },
+  {
+    title: "Advertising & Analytics (Meta Pixel)",
+    body: "We use the Meta (Facebook) Pixel, which sets cookies and tells Meta about actions on this site - pages viewed, products viewed, items added to cart, checkout started and orders placed (product, quantity and order value). This helps us measure our Facebook and Instagram ads and show relevant ads. We do not send your name, phone number or address to Meta. You can control ad personalisation in your Facebook / Instagram ad settings, or block these cookies in your browser.",
   },
   {
     title: "Your Choices",

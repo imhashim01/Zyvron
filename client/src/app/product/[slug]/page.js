@@ -9,6 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import StarRating from "@/components/StarRating";
 import JsonLd from "@/components/JsonLd";
 import Slider from "@/components/Slider";
+import TrackViewContent from "@/components/TrackViewContent";
 
 // See lib/api.js's serverFetch comment - lowered from 3600s so admin-panel
 // product changes show up on the storefront within about a minute.
@@ -102,6 +103,7 @@ export default async function ProductPage({ params }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <TrackViewContent product={{ _id: product._id, title: product.title, price: product.price, category: product.category }} />
       <JsonLd data={productJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
 
